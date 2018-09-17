@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="从循环到map假设我们有一个简单的Fibonacci序列：[0, 1, 1, 2, 3, 5]。如果我们要计算每个元素的平方，怎么办呢？ 一个最朴素的做法是for循环： var fibonacci = [0, 1, 1, 2, 3, 5] var squares = [Int]()  for value in fibonacci {     squares.append(value * value">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通过closure参数化数组元素的变形操作">
+<meta property="og:url" content="http://yoursite.com/2016/08/17/通过closure参数化数组元素的变形操作/index.html">
+<meta property="og:site_name" content="Owl&#39;s blog">
+<meta property="og:description" content="从循环到map假设我们有一个简单的Fibonacci序列：[0, 1, 1, 2, 3, 5]。如果我们要计算每个元素的平方，怎么办呢？ 一个最朴素的做法是for循环： var fibonacci = [0, 1, 1, 2, 3, 5] var squares = [Int]()  for value in fibonacci {     squares.append(value * value">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-17T12:43:04.674Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="通过closure参数化数组元素的变形操作">
+<meta name="twitter:description" content="从循环到map假设我们有一个简单的Fibonacci序列：[0, 1, 1, 2, 3, 5]。如果我们要计算每个元素的平方，怎么办呢？ 一个最朴素的做法是for循环： var fibonacci = [0, 1, 1, 2, 3, 5] var squares = [Int]()  for value in fibonacci {     squares.append(value * value">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/08/17/通过closure参数化数组元素的变形操作/"/>
+
+
+
+
+
+  <title>通过closure参数化数组元素的变形操作 | Owl's blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Owl's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/17/通过closure参数化数组元素的变形操作/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pengyw">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Owl's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">通过closure参数化数组元素的变形操作</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-08-17T01:57:18+08:00">
+                2016-08-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="从循环到map"><a href="#从循环到map" class="headerlink" title="从循环到map"></a>从循环到map</h3><p>假设我们有一个简单的Fibonacci序列：[0, 1, 1, 2, 3, 5]。如果我们要计算每个元素的平方，怎么办呢？</p>
+<p>一个最朴素的做法是for循环：</p>
+<pre><code>var fibonacci = [0, 1, 1, 2, 3, 5]
+var squares = [Int]()
+
+for value in fibonacci {
+    squares.append(value * value)
+}
+</code></pre><p>也许，现在你还觉得这样没什么不好理解，但是，想象一下这段代码在几十行代码中间的时候，或者当这样类似的逻辑反复出现的时候，整体代码的可读性就不那么强了。</p>
+<p>如果你觉得这还不是个足够引起你注意的问题，那么，当我们要定义一个常量squares的时候，上面的代码就完全无法胜任了。怎么办呢？先来看解决方案：</p>
+<pre><code>// [0, 1, 1, 4, 9, 25]
+let constSquares = fibonacci.map { $0 * $0 }
+</code></pre><p>上面这行代码，和之前那段for循环执行的结果是相同的。显然，它比for循环更具表现力，并且也能把我们期望的结果定义成常量。当然，map并不是什么魔法，无非就是把for循环执行的逻辑，封装在了函数里，这样我们就可以把函数的返回值赋值给常量了。我们可以通过extension很简单的自己来实现map：</p>
+<pre><code>extension Array {
+    func myMap&lt;T&gt;(_ transform: (Element) -&gt; T) -&gt; [T] {
+        var tmp: [T] = []
+        tmp.reserveCapacity(count)
+
+        for value in self {
+            tmp.append(transform(value))
+        }
+
+        return tmp
+    }
+}
+</code></pre><p>虽然和Swift标准库相比，myMap的实现中去掉了和异常声明相关的部分。但它已经足以表现map的核心实现过程了。除了在append之前使用了reserveCapacity给新数组预留了空间之外，它的实现过程和一开始我们使用的for循环没有任何差别。</p>
+<p>如果你还不了解Element也没关系，把它理解为Array中元素类型的替代符就好了。在后面我们讲到Sequence类型的时候，会专门提到它。</p>
+<p>完成后，当我们在playground里测试的时候：</p>
+<pre><code>// [0, 1, 1, 4, 9, 25]
+let constSequence1 = fibonacci.myMap { $0 * $0 }
+</code></pre><p>就会发现执行结果和之前的constSequence是一样的了。</p>
+<h3 id="参数化数组元素的执行动作"><a href="#参数化数组元素的执行动作" class="headerlink" title="参数化数组元素的执行动作"></a>参数化数组元素的执行动作</h3><p>其实，仔细观察myMap的实现，就会发现它最大的意义，就是保留了遍历Array的过程，而把要执行的动作留给了myMap的调用者通过参数去定制。而这，就是我们一开始提到的 <strong>用closure来参数化对数组的操作行为</strong> 的含义。</p>
+<p>有了这种思路之后，我们就可以把各种常用的带有遍历行为的操作，定制成多种不同的遍历“套路”，而把对数组中每一个元素的处理动作留给函数的调用者。但是别急，在开始自动动手造轮子之前，Swift library已经为我们准备了一些，例如：</p>
+<p>首先，是找到最小、最大值，对于这类操作来说，只要数组中的元素实现了Equatable protocol，我们甚至无需定义对元素的具体操作：</p>
+<pre><code>fibonacci.min() // 0
+fibonacci.max() // 5
+</code></pre><p>使用min和max很安全，因为当数组为空时，这两个方法将返回nil。</p>
+<p>其次，过滤出满足特定条件的元素，我们只要通过参数指定筛选规则就好了：</p>
+<pre><code>fibonacci.filter { $0 % 2 == 0 }
+</code></pre><p>第三，比较数组相等或以特定元素开始。对这类操作，我们需要提供两个内容，一个是要比较的数组，另一个则是比较的规则：</p>
+<pre><code>// false
+fibonacci.elementsEqual([0, 1, 1], by: { $0 == $1 })
+// true
+fibonacci.starts(with: [0, 1, 1], by: { $0 == $1 })
+</code></pre><p>第四，最原始的for循环的替代品：</p>
+<pre><code>fibonacci.forEach { print($0) }
+// 0
+// 1
+// ...
+</code></pre><p>要注意它和map的一个重要区别：<strong>forEach并不处理closure参数的返回值</strong>。因此它只适合用来对数组中的元素进行一些操作，而不能用来产生返回结果。</p>
+<p>第五、对数组进行排序，这时，我们需要通过参数指定的是排序规则：</p>
+<pre><code>// [0, 1, 1, 2, 3, 5]
+fibonacci.sorted()
+// [5, 3, 2, 1, 1, 0]
+fibonacci.sorted(by: &gt;)
+
+let pivot = fibonacci.partition(by: { $0 &lt; 1 })
+fibonacci[0 ..&lt; pivot] // [5, 1，1，2, 3]
+fibonacci[pivot ..&lt; fibonacci.endIndex] // [0]
+</code></pre><p>其中，sorted(by:)的用法是很直接的，它默认采用升序排列。同时，也允许我们通过by自定义排序规则。在这里&gt;是{ $0 &gt; $1 }的简写形式。Swift中有很多在不影响语义的情况下的简写形式。</p>
+<p>而partition(by:)则会 <strong>先对传递给它的数组进行重排</strong>，然后根据指定的条件在重排的结果中返回一个分界点位置。这个分界点分开的两部分中，前半部分的元素都不满足指定条件；后半部分都满足指定条件。而后，我们就可以使用range operator来访问这两个区间形成的Array对象。大家可以根据例子中注释的结果，来理解partition的用法。</p>
+<p>第六，是把数组的所有内容，“合并”成某种形式的值，对这类操作，我们需要指定的，是合并前的初始值，以及“合并”的规则。例如，我们计算fibonacci中所有元素的和：</p>
+<pre><code>fibonacci.reduce(0, +) // 12
+</code></pre><p>在这里，初始值是0，和第二个参数+，则是{ $0 + $1 }的缩写。</p>
+<p>通过这些例子，你应该能感受到了，这些通过各种形式封装了遍历动作的方法，它们之中的任何一个，都比直接通过for循环实现具有更强的表现力。这些API，开始让我们的代码从面向机器的，转变成面向业务需求的。因此，在Swift里，你应该试着让自己转变观念，当你面对一个Array时，你真的几乎可以忘记下标和循环了。</p>
+<h3 id="区分修改外部变量和保存内部状态"><a href="#区分修改外部变量和保存内部状态" class="headerlink" title="区分修改外部变量和保存内部状态"></a>区分修改外部变量和保存内部状态</h3><p>当我们使用上面提到的这些带有closure参数的Array方法时，一个不好的做法就是通过closure去修改外部变量，并依赖这种副作用产生的结果。来看一个例子：</p>
+<pre><code>var sum = 0
+let constSquares2 = fibonacci.map { (fib: Int) -&gt; Int in
+    sum += fib
+    return fib * fib
+}
+</code></pre><p>在这个例子里，map的执行产生了一个副作用，就是对fibonacci中所有的元素求和。这不是一个好的方法，我们应该避免这样。你应该单独使用reduce来完成这个操作，或者如果一定要在closure参数里修改外部变量，哪怕用forEach也是比map更好的方案。</p>
+<p>但是，在函数实现内部，专门用一个外部变量来保存closure参数的执行状态，则是一个常用的实现技法。例如，我们要创建一个新的数组，其中每个值，都是数组当前位置和之前所有元素的和，可以这样：</p>
+<pre><code>extension Array {
+    func accumulate&lt;T&gt;(_ initial: T,
+                                         _ nextSum: (T, Element) -&gt; T) -&gt; [T] {
+        var sum = initial
+
+        return map { next in
+            sum = nextSum(sum, next)
+            return sum
+        }
+    }
+}
+</code></pre><p>在上面这个例子里，我们利用map的closure参数捕获了sum，这样就保存了每一次执行map时，之前所有元素的和。</p>
+<pre><code>// [0, 1, 2, 4, 7, 12]
+fibonacci.accumulate(0, +)
+</code></pre>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/20/SwiftString/" rel="next" title="Swift 中的 String">
+                <i class="fa fa-chevron-left"></i> Swift 中的 String
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/17/Swift3 Collectoins/" rel="prev" title="Swift3 Array">
+                Swift3 Array <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="pengyw" />
+          <p class="site-author-name" itemprop="name">pengyw</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#从循环到map"><span class="nav-number">1.</span> <span class="nav-text">从循环到map</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参数化数组元素的执行动作"><span class="nav-number">2.</span> <span class="nav-text">参数化数组元素的执行动作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#区分修改外部变量和保存内部状态"><span class="nav-number">3.</span> <span class="nav-text">区分修改外部变量和保存内部状态</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pengyw</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

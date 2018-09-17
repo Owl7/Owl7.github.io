@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Sting和NSString处理Unicode的差异首先，定义一个字符串 let cafe = &amp;quot;Caf\u{00e9}&amp;quot;        // &amp;quot;Café&amp;quot; 对应Café中最后一个字符来说它的unicode scalar是U+00E9, 名字是LATIN SMALL LETTER E WITH ACUTE。 每一个unicode都有一个scalar值以及">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift 中的 String">
+<meta property="og:url" content="http://yoursite.com/2016/07/20/SwiftString/index.html">
+<meta property="og:site_name" content="Owl&#39;s blog">
+<meta property="og:description" content="Sting和NSString处理Unicode的差异首先，定义一个字符串 let cafe = &amp;quot;Caf\u{00e9}&amp;quot;        // &amp;quot;Café&amp;quot; 对应Café中最后一个字符来说它的unicode scalar是U+00E9, 名字是LATIN SMALL LETTER E WITH ACUTE。 每一个unicode都有一个scalar值以及">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-17T08:41:01.865Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Swift 中的 String">
+<meta name="twitter:description" content="Sting和NSString处理Unicode的差异首先，定义一个字符串 let cafe = &amp;quot;Caf\u{00e9}&amp;quot;        // &amp;quot;Café&amp;quot; 对应Café中最后一个字符来说它的unicode scalar是U+00E9, 名字是LATIN SMALL LETTER E WITH ACUTE。 每一个unicode都有一个scalar值以及">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/07/20/SwiftString/"/>
+
+
+
+
+
+  <title>Swift 中的 String | Owl's blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Owl's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/07/20/SwiftString/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pengyw">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Owl's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Swift 中的 String</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-07-20T21:28:38+08:00">
+                2016-07-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Sting和NSString处理Unicode的差异"><a href="#Sting和NSString处理Unicode的差异" class="headerlink" title="Sting和NSString处理Unicode的差异"></a>Sting和NSString处理Unicode的差异</h3><p>首先，定义一个字符串</p>
+<pre><code>let cafe = &quot;Caf\u{00e9}&quot;        // &quot;Café&quot;
+</code></pre><p>对应Café中最后一个字符来说它的unicode scalar是U+00E9, 名字是LATIN SMALL LETTER E WITH ACUTE。 每一个unicode都有一个scalar值以及一个全大写字母表示的名称。</p>
+<p>为了表示é，除了使用unicode scalar外，还可以使用两个unicode字符拼起来:</p>
+<blockquote>
+<ul>
+<li>英文字母e，unicode scalar是U0065，name是LATIN SMALL LETTER E;</li>
+<li>声调符号’，unicode scalar是U0301, name是COMBINING ACUTE ACCENT;</li>
+</ul>
+</blockquote>
+<p>把这两个字符这样组合起来(我们管\u{0065}\u{0301}就叫做grapheme cluster)：</p>
+<pre><code>let cafee = &quot;Caf\u{0065}\u{0301}&quot;        // &quot;Café&quot;
+</code></pre><p>尽管cafee定义中貌似有5个字符，但实际显示出来的还是和之前的一样。既然unicode字符可以有多种表现形式，那么由不同code unit构成的字符串相等么？<br>对此swift的String和Object-C中的NSSting处理方式是有差别的，这差别就是区分他们最明显的地方之一。</p>
+<p>为了能识别上面的cafe和cafee的情况，unicode规范中提出了一个概念: <a href="https://en.wikipedia.org/wiki/Unicode_equivalence" target="_blank" rel="noopener">canonicall equivalent</a>。如何理解它？先看Swift是如何识别的。</p>
+<h4 id="Swift-String"><a href="#Swift-String" class="headerlink" title="Swift String"></a>Swift String</h4><p>要读一个字符串的字符时，可以用Sting的characters属性:</p>
+<pre><code>cafe.characters.count      // 4
+cafee.characters.count     // 4
+</code></pre><p>尽管cafee中最后一个字符串定义使用了两个code unit, Swift可以识别的Character中字符个数也是4。<br>但是，当我们查看utf8和utf16就能看到区别了:</p>
+<pre><code>cafe.utf8.count          // 5
+cafee.utf8.count         // 6
+
+cafe.utf16.count         // 4
+cafee.utf16.count        // 5
+</code></pre><p>为什么会这样呢？我们用UTF-8编码举例：<br>对于cafe来说，é的UTF-8编码是C3 A9，加上前面Caf的编码是43 61 66，因此cafe的UTF-8编码个数是5；<br>对于cafee来说，声调字符’的UTF-8编码是CC 81，加上前面Cafe的UTF-8编码是43 61 66 65，因此是6个，它相当于Cafe’；(UTF-16同理)<br>尽管cafe和cafee的编码方式不同，当我们在Swift中，比较cafe和cafee时，结果会是true:</p>
+<pre><code>cafe == cafee         // true
+</code></pre><p>这就是unicode canonically equivalen的含义，通过例子可以更好的了解到swift在unicode表意正确上做的努力。</p>
+<h4 id="NSSting"><a href="#NSSting" class="headerlink" title="NSSting"></a>NSSting</h4><p>而当我们把这些例子用在<strong>NSString</strong>上，情况就有些不同。用同样的code unit定义下面两个<strong>NSString</strong>对象：</p>
+<pre><code>let nsCafe = NSString(characters: [0x43, 0x61, 0x66, 0xe9], length: 4)
+nsCafe.length     // 4
+let nsCafee = NSString(characters: [0x43, 0x61, 0x66, 0x65, 0x0301], length: 5)
+nsCafee.length     // 5
+</code></pre><p>从上面的代码可以看到，同样是使用不同的code unit构建字符串”Café”，在 <strong>NSString</strong> 看来，他们是长度不同的两个字符串。<br>因此，比较的时候也是false：</p>
+<pre><code>nsCafe == nsCafee     // false
+</code></pre><p>因此，==对NSString来说，并没有执行canonically equivalen的语义。为了在不同的NSString对象之间进行语义比较，我们只能这样：</p>
+<pre><code>let result = nsCafe.compare(nsCafee as String)     // ComparisonResult
+result == ComparisonResult.orderedSame     // true
+</code></pre><h3 id="Sting不是一个Collection类型"><a href="#Sting不是一个Collection类型" class="headerlink" title="Sting不是一个Collection类型"></a>Sting不是一个Collection类型</h3><h4 id="如果String是一个Collection类型"><a href="#如果String是一个Collection类型" class="headerlink" title="如果String是一个Collection类型"></a>如果String是一个Collection类型</h4><p>借助协议，我们可以很容易强制让Sting类型是一个Collection：</p>
+<pre><code>extension String: Collection {
+    // Do not need to implement anything.
+    // Collection has enough default implementation.
+}
+</code></pre><p>然后就可以给String对象用上各种Collection工具了：</p>
+<pre><code>var swfit = &quot;Swift is fun&quot;
+swift.dropFirst(9)     // fun
+</code></pre><p>甚至可以这样操作emoji，这看上去似乎很好。那么为什么Swift中的String不是一个Collection？</p>
+<p>因为一旦如此，所有在Collection中定义的算法用在String对象的时候，我们都会默认它们是正确的。但实际上，我们很难同时做到算法的逻辑正确和unicode语义正确。尽管在上面的例子中，我们看到了String.Character类型已经尽可能在逻辑层面上忽略掉unicode的各种细节，但有些问题，仍旧难以处理，例如：</p>
+<pre><code>let cafee = &quot;caf\u{0065}\u{0301}&quot; // café
+cafee.dropFirst(4) // &quot;&quot;
+cafee.dropLast(1)  // !!! Runtime error !!!
+</code></pre><p>在上面的例子里：</p>
+<blockquote>
+<ul>
+<li>删掉前面4个“元素”会留下最后的声调符么？我相信，如果问到足够多的人，一定可以得到不同的答案，但实际的情况是，cafee的值会变成一个空字符串，这和你想象的一样么？</li>
+<li>调用dropLast(1)会删掉字符é，还是会删掉声调符呢？这次，无论你选择哪个，都不对，因为这个调用会直接引发运行时错误；</li>
+</ul>
+</blockquote>
+<p>这就是把String作为一个集合类型带来的问题：<strong>面对unicode复杂的组合规则，我们很难保证所有的集合算法都是安全并且语义正确的</strong>。</p>
+<h4 id="还得让String用起来像一个集合-理解表达字符串的view"><a href="#还得让String用起来像一个集合-理解表达字符串的view" class="headerlink" title="还得让String用起来像一个集合(理解表达字符串的view)"></a>还得让String用起来像一个集合(理解表达字符串的view)</h4><p>尽管前面说了一堆，但是我们最终还是要让String使用起来更像Collection。</p>
+<p>为了达到这个目的，第一个要解决的就是，如何让Swift理解字符串中的“字符集合”。为了不存在歧义，String为开发者提供了一些不同的”view”。简单来说，就是告诉String类型如何去理解字符串中的内容，它们是String的不同属性。</p>
+<p>首先，是根据unicode scalar的编码方式划分的“view”：</p>
+<blockquote>
+<ul>
+<li>unicodeScalar：按照字符串中每一个字符的unicode scalar来形成集合；</li>
+<li>utf8：按照字符串中每一个字符的UTF-8编码来形成集合；</li>
+<li>utf16：按照字符串中每一个字符的UTF-16编码来形成集合；</li>
+</ul>
+</blockquote>
+<p>当明确指定了上面的属性之后，字符串就可以安全的当做集合来处理了。例如：</p>
+<pre><code>cafee.unicodeScalars.forEach { print($0) }
+cafee.utf8.forEach { print($0) }
+cafee.utf16.forEach { print($0) }
+</code></pre><p>我们就可以在控制台得到字符串“café”的每一个unicode scalar / UTF-8 / UTF-16编码的数值。或者，对于上面会带来运行时错误的dropLast(:)方法，现在也可以正常工作了：</p>
+<pre><code>cafee.unicodeScalars.dropLast(1) // cafe
+cafee.utf16.dropLast(1)          // cafe
+cafee.utf8.dropLast(1)           // cafe�
+</code></pre><p>在上面的例子里，当我们使用dropLast(:)删掉最后一个unicode scalar和UTF-16编码时，“café”的声调字符就去掉变成了“cafe”，而我们删掉UTF-8编码的最后一个元素时，由于声调符需要两个UTF-8编码，因此最后一个会留意下无法识别的乱码。但无论如何，当我们指定了字符串中元素的构成方式之后，它们至少都可以像集合一样安全的使用了。</p>
+<p>其次，是一个需要额外多讲一些的“view”：characters，它是一个String.CharacterView类型的属性。这个“view”是按照unicode grapheme clusters计算字符串的字符个数，也就是最接近我们肉眼看到的字符的view。因此String.characters形式上就可以理解为“由我们看到的字符构成的字符数组”。一个最简单直接的例子就是我们之前用过的统计字符个数：</p>
+<pre><code>let cafee = &quot;caf\u{0065}\u{0301}&quot;
+cafee.characters.count // 4
+</code></pre><p>String.characters还提供了两个索引位置：</p>
+<pre><code>cafee.characters.startIndex // 0
+cafee.characters.endIndex   // 5
+</code></pre><p>它们是String.CharacterView.Index类型的属性，表示字符串开始，以及最后一个字符的下一个位置。在String的实现中，我们可以找到下面的类型定义：</p>
+<pre><code>public struct String {
+    /// The index type for subscripting a string.
+    public typealias Index = String.CharacterView.Index
+}
+</code></pre><p>也就是说，characters属性中的索引，是可以直接用来索引字符串特定位置的。但是由于你无法确定两个字符之间到底相隔了多少字符，因此，你并不能像访问一个Array一样去使用characters：</p>
+<pre><code>cafee.characters[2] // !!! This is WRONG !!!
+</code></pre><p>String.CharacterView只遵从了BidirectionalCollection protocol，因此，它只能顺序向前，或者向后移动，而不能随机指定位置移动。如果我们要获得特定位置的字符，只能使用index(_:offsetBy:)这个方法。例如：</p>
+<pre><code>let index = cafee.index(cafee.startIndex, offsetBy: 3) // 3
+cafee[index] // é
+</code></pre><p>在上面的例子里，使用cafee.index(cafee.characters.startIndex, offsetBy: 3)是一样的。</p>
+<p>或者，如果你担心offsetBy参数越界，还可以使用index(_:offsetBy:limitedBy:)方法添加一个末尾位置的限制，一旦offset越界，这个方法就会返回nil：</p>
+<pre><code>let index = cafee.index(
+cafee.startIndex,
+offsetBy: 100,
+limitedBy: cafee.endIndex) // nil
+</code></pre><h4 id="让String支持-是个好点子么？"><a href="#让String支持-是个好点子么？" class="headerlink" title="让String支持[]是个好点子么？"></a>让String支持[]是个好点子么？</h4><p>看到这里，你可能会想了，既然有了index方法，那我自己给String添加一个extension去实现subscript方法不就用起来更像个数组了么？来看下面的代码，这样真的好用么？</p>
+<pre><code>extension String {
+    subscript(index: Int) -&gt; Character {
+        guard let index = self.index(startIndex,
+            offsetBy: index, limitedBy: endIndex) else {
+                fatalError(&quot;String index out of range.&quot;)
+            }
+        return self[index]
+    }
+}
+
+cafee[3] // é
+</code></pre><p>在上面这个例子里，cafee[3]可以得到正确的结果，却也给开发者带来了一些在性能上的错觉。因为前面我们提到过。String.CharacterView只遵从了BidirectionalCollection，也就意味着index实际上是一个O(n)方法，它需要一个个的挪到我们期望的offset。但是，cafee[3]这样的用法却不会给我们任何关于性能的提示。我们只会觉得这是一个和数组访问一样的O(1)操作。于是，当我们无意间写下下面的代码时：</p>
+<pre><code>for i in 0..&lt;4 {
+    print(cafee[i])
+}
+</code></pre><p><strong>我们就制造了一个O(n2)的性能瓶颈。因此，让String支持[]并不是一个好主意。</strong></p>
+<h3 id="基于Unicode字符串常用操作"><a href="#基于Unicode字符串常用操作" class="headerlink" title="基于Unicode字符串常用操作"></a>基于Unicode字符串常用操作</h3><h4 id="获取前缀"><a href="#获取前缀" class="headerlink" title="获取前缀"></a>获取前缀</h4><pre><code>let beg = cafee.startIndex
+let end = cafee.index(cafee.startIndex, offsetBy: 3)
+cafee[beg ..&lt; end] // Caf
+</code></pre><p>看到这里，你会想这难道不是cafee[0 ..&lt; 3]就能解决的问题么？为了避免上面这样的代码，Swift提供了一个叫做prefix(_:)的方法，它返回一个特定的CharacterView：</p>
+<pre><code>String(cafee.characters.prefix(3)) // Caf
+</code></pre><p>当我们用这个view创建String对象的时候，就可以看到结果和之前是一样的。这样用起来，就方便多了。</p>
+<h4 id="遍历字符串中的每一个字符"><a href="#遍历字符串中的每一个字符" class="headerlink" title="遍历字符串中的每一个字符"></a>遍历字符串中的每一个字符</h4><p>有时候，我们需要遍历字符串中的每一个字符，通过characters属性，我们可以很容易办到：</p>
+<pre><code>var mixStr = &quot;Swift很有趣&quot;
+
+for (index, value) in mixStr.characters.enumerated() {
+    print(&quot;\(index): \(value)&quot;)
+}
+
+// 0: S
+// 1: w
+// 2: i
+// 3: f
+// 4: t
+// 5: 很
+// 6: 有
+// 7: 趣
+</code></pre><p>从结果就可以看到，Swift可以很好的识别字符串中的中英文字符，让unicode字符串处理起来和普通的字符数组一样。</p>
+<h4 id="插入内容"><a href="#插入内容" class="headerlink" title="插入内容"></a>插入内容</h4><p>当我们要在字符串中插入内容时，要先获得目标位置的Index对象，然后使用insert方法。例如：</p>
+<pre><code>if let index = mixStr.characters.index(of: &quot;很&quot;) {
+    mixStr.insert(contentsOf: &quot; 3.0&quot;.characters, at: index)
+    // &quot;Swift 3.0很有趣&quot;
+}
+</code></pre><h4 id="基于Range的查找和替换"><a href="#基于Range的查找和替换" class="headerlink" title="基于Range的查找和替换"></a>基于Range的查找和替换</h4><p>借助于由String.Index构成的Range对象，我们可以很方便的替换某个范围的字符串。例如，要把mixStr中的“很有趣”，替换成“is interesting”，可以这样：</p>
+<pre><code>if let cnIndex = mixStr.characters.index(of: &quot;很&quot;) {
+    // 2. Replace a specific range
+    mixStr.replaceSubrange(
+            cnIndex ..&lt; mixStr.endIndex, 
+            with: &quot; is interesting!&quot;)
+    // Swift 3.0 is interesting!
+}
+</code></pre><p>首先，我们使用cnIndex ..&lt; mixStr.endIndex得到了要替换的字符串的Range对象。然后，直接调用replaceSubrange(_:with:)，用with中的值替换Range中的值就可以了；</p>
+<h4 id="字符串切片"><a href="#字符串切片" class="headerlink" title="字符串切片"></a>字符串切片</h4><p>在上面，我们提到过String.characters是有集合类型的行为的，因此，最简单的获取子串的方式就是截取String.characters，得到一个新的CharacterView，并用这个view，生成新的String对象。例如，我们要截取mixStr中的“interesting”部分，可以这样：</p>
+<pre><code>let swiftView = mixStr.characters.suffix(12).dropLast()
+String(swiftView) // interesting
+</code></pre><p>这样，我们先用suffix截掉了头部的”Swift 3.0 is”，再用dropLast方法去掉了末尾的“!”，但别忘了，此时，我们针对mixStr.characters的操作，得到的是一个String.CharacterView对象，我们需要用这个view，生成一个新的String。</p>
+<p>另外一类和子串相关的操作就是按照一定规则把之前的字符分割成多个部分，先来看个例子：</p>
+<pre><code>let strViews = mixStr.characters.split(separator: &quot; &quot;)
+strViews.map(String.init)
+// [&quot;Swift&quot;, &quot;3.0&quot;, &quot;is&quot;, &quot;interesting!&quot;]
+</code></pre><p>其中，我们可以把strViews理解为一个String.CharacterView集合。然后用map方法把每集合中的每一个view都生成一个新的String对象，最后，就得到了一个包含每一个子串的数组Array<string>。</string></p>
+<p>除了用特定字符来分割子串，我们还可以用一个closure来指定分割条件。例如，把mixStr中的每个奇数位置的字符当成分隔符：</p>
+<pre><code>var i = 0
+let singleCharViews = mixStr.characters.split { _ in
+    if i &gt; 0 {
+        i = 0
+        return true
+    }
+    else {
+        i += 1
+        return false
+    }
+}
+
+singleCharViews.map(String.init)
+// [&quot;S&quot;, &quot;i&quot;, &quot;t&quot;, &quot;3&quot;, &quot;0&quot;, &quot;i&quot;, &quot; &quot;, &quot;n&quot;, &quot;e&quot;, &quot;e&quot;, &quot;t&quot;, &quot;n&quot;, &quot;!&quot;]
+</code></pre>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/17/通过closure参数化数组元素的变形操作/" rel="prev" title="通过closure参数化数组元素的变形操作">
+                通过closure参数化数组元素的变形操作 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="pengyw" />
+          <p class="site-author-name" itemprop="name">pengyw</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Sting和NSString处理Unicode的差异"><span class="nav-number">1.</span> <span class="nav-text">Sting和NSString处理Unicode的差异</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Swift-String"><span class="nav-number">1.1.</span> <span class="nav-text">Swift String</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NSSting"><span class="nav-number">1.2.</span> <span class="nav-text">NSSting</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sting不是一个Collection类型"><span class="nav-number">2.</span> <span class="nav-text">Sting不是一个Collection类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#如果String是一个Collection类型"><span class="nav-number">2.1.</span> <span class="nav-text">如果String是一个Collection类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#还得让String用起来像一个集合-理解表达字符串的view"><span class="nav-number">2.2.</span> <span class="nav-text">还得让String用起来像一个集合(理解表达字符串的view)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#让String支持-是个好点子么？"><span class="nav-number">2.3.</span> <span class="nav-text">让String支持[]是个好点子么？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于Unicode字符串常用操作"><span class="nav-number">3.</span> <span class="nav-text">基于Unicode字符串常用操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#获取前缀"><span class="nav-number">3.1.</span> <span class="nav-text">获取前缀</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#遍历字符串中的每一个字符"><span class="nav-number">3.2.</span> <span class="nav-text">遍历字符串中的每一个字符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#插入内容"><span class="nav-number">3.3.</span> <span class="nav-text">插入内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于Range的查找和替换"><span class="nav-number">3.4.</span> <span class="nav-text">基于Range的查找和替换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#字符串切片"><span class="nav-number">3.5.</span> <span class="nav-text">字符串切片</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pengyw</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
