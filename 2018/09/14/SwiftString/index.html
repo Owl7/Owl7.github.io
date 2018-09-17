@@ -108,20 +108,24 @@
 
 
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Owl&#39;s blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="Sting和NSString处理Unicode的差异首先，定义一个字符串 let cafe = &amp;quot;Caf\u{00e9}&amp;quot;        // &amp;quot;Café&amp;quot; 对应Café中最后一个字符来说它的unicode scalar是U+00E9, 名字是LATIN SMALL LETTER E WITH ACUTE。 每一个unicode都有一个scalar值以及">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift 中的字符">
+<meta property="og:url" content="http://yoursite.com/2018/09/14/SwiftString/index.html">
 <meta property="og:site_name" content="Owl&#39;s blog">
+<meta property="og:description" content="Sting和NSString处理Unicode的差异首先，定义一个字符串 let cafe = &amp;quot;Caf\u{00e9}&amp;quot;        // &amp;quot;Café&amp;quot; 对应Café中最后一个字符来说它的unicode scalar是U+00E9, 名字是LATIN SMALL LETTER E WITH ACUTE。 每一个unicode都有一个scalar值以及">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-17T03:17:42.070Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Owl&#39;s blog">
+<meta name="twitter:title" content="Swift 中的字符">
+<meta name="twitter:description" content="Sting和NSString处理Unicode的差异首先，定义一个字符串 let cafe = &amp;quot;Caf\u{00e9}&amp;quot;        // &amp;quot;Café&amp;quot; 对应Café中最后一个字符来说它的unicode scalar是U+00E9, 名字是LATIN SMALL LETTER E WITH ACUTE。 每一个unicode都有一个scalar值以及">
 
 
 
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/09/14/SwiftString/"/>
 
 
 
@@ -131,7 +135,7 @@
   };
 </script>
 
-  <title>Owl's blog</title>
+  <title>Swift 中的字符 | Owl's blog</title>
   
 
 
@@ -178,8 +182,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -216,7 +219,7 @@
         
         
           
-          <li class="menu-item menu-item-home menu-item-active">
+          <li class="menu-item menu-item-home">
     <a href="/" rel="section">
       <i class="menu-item-icon fa fa-fw fa-home"></i> <br />Home</a>
   </li>
@@ -260,9 +263,9 @@
           
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -294,11 +297,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/14/SwiftString/" itemprop="url">
-                  Swift 中的字符
-                </a>
+          <h1 class="post-title" itemprop="name headline">Swift 中的字符
               
             
           </h1>
@@ -373,9 +372,7 @@
       
 
       
-        
-          
-            <h3 id="Sting和NSString处理Unicode的差异"><a href="#Sting和NSString处理Unicode的差异" class="headerlink" title="Sting和NSString处理Unicode的差异"></a>Sting和NSString处理Unicode的差异</h3><p>首先，定义一个字符串</p>
+        <h3 id="Sting和NSString处理Unicode的差异"><a href="#Sting和NSString处理Unicode的差异" class="headerlink" title="Sting和NSString处理Unicode的差异"></a>Sting和NSString处理Unicode的差异</h3><p>首先，定义一个字符串</p>
 <pre><code>let cafe = &quot;Caf\u{00e9}&quot;        // &quot;Café&quot;
 </code></pre><p>对应Café中最后一个字符来说它的unicode scalar是U+00E9, 名字是LATIN SMALL LETTER E WITH ACUTE。 每一个unicode都有一个scalar值以及一个全大写字母表示的名称。</p>
 <p>为了表示é，除了使用unicode scalar外，还可以使用两个unicode字符拼起来:</p>
@@ -551,8 +548,6 @@ let singleCharViews = mixStr.characters.split { _ in
 singleCharViews.map(String.init)
 // [&quot;S&quot;, &quot;i&quot;, &quot;t&quot;, &quot;3&quot;, &quot;0&quot;, &quot;i&quot;, &quot; &quot;, &quot;n&quot;, &quot;e&quot;, &quot;e&quot;, &quot;t&quot;, &quot;n&quot;, &quot;!&quot;]
 </code></pre>
-          
-        
       
     </div>
 
@@ -572,12 +567,12 @@ singleCharViews.map(String.init)
       
 
       
+      
+      
 
       
 
       
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -587,14 +582,15 @@ singleCharViews.map(String.init)
   </article>
 
 
-    
-  </section>
-
-  
+  </div>
 
 
           </div>
           
+
+  
+
+
 
         </div>
         
@@ -615,8 +611,17 @@ singleCharViews.map(String.init)
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -661,6 +666,22 @@ singleCharViews.map(String.init)
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Sting和NSString处理Unicode的差异"><span class="nav-number">1.</span> <span class="nav-text">Sting和NSString处理Unicode的差异</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Swift-String"><span class="nav-number">1.1.</span> <span class="nav-text">Swift String</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NSSting"><span class="nav-number">1.2.</span> <span class="nav-text">NSSting</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sting不是一个Collection类型"><span class="nav-number">2.</span> <span class="nav-text">Sting不是一个Collection类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#如果String是一个Collection类型"><span class="nav-number">2.1.</span> <span class="nav-text">如果String是一个Collection类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#还得让String用起来像一个集合-理解表达字符串的view"><span class="nav-number">2.2.</span> <span class="nav-text">还得让String用起来像一个集合(理解表达字符串的view)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#让String支持-是个好点子么？"><span class="nav-number">2.3.</span> <span class="nav-text">让String支持[]是个好点子么？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于Unicode字符串常用操作"><span class="nav-number">3.</span> <span class="nav-text">基于Unicode字符串常用操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#获取前缀"><span class="nav-number">3.1.</span> <span class="nav-text">获取前缀</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#遍历字符串中的每一个字符"><span class="nav-number">3.2.</span> <span class="nav-text">遍历字符串中的每一个字符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#插入内容"><span class="nav-number">3.3.</span> <span class="nav-text">插入内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于Range的查找和替换"><span class="nav-number">3.4.</span> <span class="nav-text">基于Range的查找和替换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#字符串切片"><span class="nav-number">3.5.</span> <span class="nav-text">字符串切片</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -791,6 +812,10 @@ singleCharViews.map(String.init)
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.1"></script>
+
+
 
   
 
