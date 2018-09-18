@@ -94,17 +94,17 @@
 
 
 
-<meta name="description" content="如何创建一个Array？首先，我们可以通过下面三种方法定义一个空的Array： var array1: Array&amp;lt;Int&amp;gt; = Array&amp;lt;Int&amp;gt;() var array2: [Int] = [] var array3 = array2 在上面的代码中，前两种使用了type annotation，Array和[Int]没有区别，你可以根据自己的喜好来选择。而第三种，我们">
+<meta name="description" content="filter和与filter类似的语义前面，我们提到过filter的用法，用于在Array中，过滤满足特定条件的元素。而这个条件，就是通过filter的closure参数来确定的： var fibonacci = [0, 1, 1, 2, 3, 5]  // [0, 2] fibonacci.filter { $0 % 2 == 0 } 按照前面实现map的思路，我们可以自己来实现一个filter">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Swift3 Array">
-<meta property="og:url" content="http://yoursite.com/2016/08/17/Swift3 Collectoins/index.html">
+<meta property="og:title" content="Filter &#x2F; Reduce &#x2F; FlatMap的实现和扩展">
+<meta property="og:url" content="http://yoursite.com/2016/09/29/Filter:Reduce:FlatMap/index.html">
 <meta property="og:site_name" content="Owl&#39;s blog">
-<meta property="og:description" content="如何创建一个Array？首先，我们可以通过下面三种方法定义一个空的Array： var array1: Array&amp;lt;Int&amp;gt; = Array&amp;lt;Int&amp;gt;() var array2: [Int] = [] var array3 = array2 在上面的代码中，前两种使用了type annotation，Array和[Int]没有区别，你可以根据自己的喜好来选择。而第三种，我们">
+<meta property="og:description" content="filter和与filter类似的语义前面，我们提到过filter的用法，用于在Array中，过滤满足特定条件的元素。而这个条件，就是通过filter的closure参数来确定的： var fibonacci = [0, 1, 1, 2, 3, 5]  // [0, 2] fibonacci.filter { $0 % 2 == 0 } 按照前面实现map的思路，我们可以自己来实现一个filter">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-09-17T08:54:19.936Z">
+<meta property="og:updated_time" content="2018-09-18T10:20:41.817Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Swift3 Array">
-<meta name="twitter:description" content="如何创建一个Array？首先，我们可以通过下面三种方法定义一个空的Array： var array1: Array&amp;lt;Int&amp;gt; = Array&amp;lt;Int&amp;gt;() var array2: [Int] = [] var array3 = array2 在上面的代码中，前两种使用了type annotation，Array和[Int]没有区别，你可以根据自己的喜好来选择。而第三种，我们">
+<meta name="twitter:title" content="Filter &#x2F; Reduce &#x2F; FlatMap的实现和扩展">
+<meta name="twitter:description" content="filter和与filter类似的语义前面，我们提到过filter的用法，用于在Array中，过滤满足特定条件的元素。而这个条件，就是通过filter的closure参数来确定的： var fibonacci = [0, 1, 1, 2, 3, 5]  // [0, 2] fibonacci.filter { $0 % 2 == 0 } 按照前面实现map的思路，我们可以自己来实现一个filter">
 
 
 
@@ -133,13 +133,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/08/17/Swift3 Collectoins/"/>
+  <link rel="canonical" href="http://yoursite.com/2016/09/29/Filter:Reduce:FlatMap/"/>
 
 
 
 
 
-  <title>Swift3 Array | Owl's blog</title>
+  <title>Filter / Reduce / FlatMap的实现和扩展 | Owl's blog</title>
   
 
 
@@ -262,7 +262,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/17/Swift3 Collectoins/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/09/29/Filter:Reduce:FlatMap/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="pengyw">
@@ -279,7 +279,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Swift3 Array</h1>
+          <h1 class="post-title" itemprop="name headline">Filter / Reduce / FlatMap的实现和扩展</h1>
         
 
         <div class="post-meta">
@@ -291,8 +291,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-08-17T01:57:18+08:00">
-                2016-08-17
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-09-29T14:59:25+08:00">
+                2016-09-29
               </time>
             
 
@@ -329,86 +329,96 @@
       
 
       
-        <h3 id="如何创建一个Array？"><a href="#如何创建一个Array？" class="headerlink" title="如何创建一个Array？"></a>如何创建一个Array？</h3><p>首先，我们可以通过下面三种方法定义一个空的Array：</p>
-<pre><code>var array1: Array&lt;Int&gt; = Array&lt;Int&gt;()
-var array2: [Int] = []
-var array3 = array2
-</code></pre><p>在上面的代码中，前两种使用了type annotation，Array<int>和[Int]没有区别，你可以根据自己的喜好来选择。而第三种，我们直接使用了一个空的Array生成了一个新的Array对象。</int></p>
-<p>其次，再来看一些定义数组时同时指定初始值的方法：</p>
-<pre><code>// [3, 3, 3]
-var threeInts = [Int](repeating: 3, count: 3)
-// [3, 3, 3, 3, 3, 3]
-var sixInts = threeInts + threeInts
-// [1, 2, 3, 4, 5]
-var fiveInts = [1, 2, 3, 4, 5]
-</code></pre><h3 id="两个常用的Array属性"><a href="#两个常用的Array属性" class="headerlink" title="两个常用的Array属性"></a>两个常用的Array属性</h3><p>定义好数组之后，我们介绍两个Array最常用的属性。第一个是count，类型是Int。我们之前已经用过，用于获取数组中元素的个数：</p>
-<pre><code>array1.count    // 0
-fiveInts.count  // 5
-</code></pre><p>第二个是isEmtpy，类型是Bool。表示数组是否为空：</p>
-<pre><code>if array2.isEmpty {
-    // array2 is empty
-    print(&quot;array2 is empty&quot;)
-}
-</code></pre><h3 id="访问Array中的元素"><a href="#访问Array中的元素" class="headerlink" title="访问Array中的元素"></a>访问Array中的元素</h3><p>首先是索引访问：</p>
-<pre><code>fiveInts[2] // 3
-fiveInts[5] // This will crash
-</code></pre><p>就像，上面例子中这样。当使用索引访问数组元素时，<strong>你必须自行确保索引的安全性</strong>。如果索引超过了数组的范围，程序就会直接崩溃。其实，在Swift里，我们几乎不需要直接使用索引来访问数组元素。稍后，我们会专门提到Array的惯用法。因此，Swift开发者也没有对索引访问添加任何安全保护。言外之意就是，非要用，你自己对结果全权负责。</p>
-<p>其次，是使用range operator访问数组的一个范围：</p>
-<pre><code>fiveInts[0...2] // [1, 2, 3]
-fiveInts[0..&lt;2] // [1, 2]
-</code></pre><p>要说明的是，使用range operator得到的，并不是一个Array，而是一个ArraySlice。什么是ArraySlice呢？简单来说，就是Array某一段内容的view，它不真正保存数组的内容，只保存这个view引用的数组的范围：</p>
-<pre><code>// +---------+---+
-// | length  | 5 |
-// +---------+---+
-// | storage ptr |
-// +---------+---+
-//           |
-//           v
-//           +---+---+---+---+---+---------------------+
-//           | 1 | 2 | 3 | 4 | 5 |  reserved capacity  |
-//           +---+---+---+---+---+---------------------+
-//           ^
-//           |
-// +---------+---+
-// | storage ptr |
-// +---------+---+
-// | beg idx | 0 |
-// +---------+---+
-// | end idx | 3 |  ArraySlice for [0...2]
-// +---------+---+
-</code></pre><p>从上面这个注释，就很容易理解view的概念了，它只记录了要表达内容的区间。但是我们也可以直接通过这个view创建新的Array对象：</p>
-<pre><code>Array(fiveInts[0...2]) // [1, 2, 3]
-</code></pre><p>这样，就得到了一个值是[1, 2, 3]的Array对象。</p>
-<h3 id="遍历数组"><a href="#遍历数组" class="headerlink" title="遍历数组"></a>遍历数组</h3><p>首先，当然是我们最熟悉的for循环的方式：</p>
-<pre><code>for value in fiveInts {
-    print(value)
-}
-// 1 
-// 2
-// ...
-</code></pre><p>其次，如果我们想在遍历的时候，同时获得数组的索引和值，可以使用数组对象的enumerated()方法，它会返回一个Sequence对象，包含了每个成员的索引和值，我们同样可以在for循环中，依次访问它们：</p>
-<pre><code>for (index, value) in fiveInts.enumerated() {
-    print(&quot;\(index): \(value)&quot;)
-}
-// 0: 1
-// 1: 2
-// ...
-</code></pre><p>第三，借助closure，我们还可以使用Array对象的forEach方法：</p>
-<pre><code>fiveInts.forEach { print($0) }
-</code></pre><h3 id="添加和删除元素"><a href="#添加和删除元素" class="headerlink" title="添加和删除元素"></a>添加和删除元素</h3><p>最后，来看如何编辑Array中的元素。要在数组的末尾添加元素，我们可以这样：</p>
-<pre><code>array1.append(1)     // [1]
-array1 += [2, 3, 4]  // [1, 2, 3, 4]
-</code></pre><p>要在Array中间位置添加元素，可以使用insert方法：</p>
-<pre><code>// [1, 2, 3, 4, 5]
-array1.insert(5, at: array1.endIndex)
-</code></pre><p>它的第一个参数表示要插入的值，第二个参数表示要插入的位置，这个位置必须是一个合法的范围，即0…array1.endIndex，如果超出这个范围，会直接引发运行时错误。</p>
-<p>要删除Array中的元素，可以使用remove(at:)方法，它只接受一个参数，表示要删除元素的位置：</p>
-<pre><code>array1.remove(at: 4) // [1, 2, 3, 4]
-</code></pre><p>同样，你必须自行保证使用的at参数不超过数组的合法范围，否则会引发运行时错误。当然，如果你仅仅想删除数组中的最后一个元素，还可以使用removeLast()方法：</p>
-<pre><code>array1.removeLast() // [1, 2, 3]
-array2.removeLast() // This will crash!!!
-</code></pre><p>从上面的例子可以看到，你同样要对removeLast()的应用安全负责，当你删除一个空数组中最后一个元素的时候，会直接引发运行时错误。</p>
+        <h3 id="filter和与filter类似的语义"><a href="#filter和与filter类似的语义" class="headerlink" title="filter和与filter类似的语义"></a>filter和与filter类似的语义</h3><p>前面，我们提到过filter的用法，用于在Array中，过滤满足特定条件的元素。而这个条件，就是通过filter的closure参数来确定的：</p>
+<pre><code>var fibonacci = [0, 1, 1, 2, 3, 5]
 
+// [0, 2]
+fibonacci.filter { $0 % 2 == 0 }
+</code></pre><p>按照前面实现map的思路，我们可以自己来实现一个filter：</p>
+<pre><code>extension Array {
+    func myFilter(_ predicate: (Element) -&gt; Bool) -&gt; [Element] {
+        var tmp: [Element] = []
+            for value in self where predicate(value) {
+                tmp.append(value)
+            }
+        return tmp
+    }
+}
+</code></pre><p>在上面的实现里，最核心的环节就是通过带有where条件的for循环找到原数组中符合条件的元素，然后把它们一一添加到tmp中，并最终返回给函数的调用者。然后，我们测试下myFilter：</p>
+<pre><code>fibonacci.myFilter { $0 % 2 == 0 } // [0, 2]
+</code></pre><p>结果，应该是和标准库中自带的filter是一样的。理解了filter之后，我们就可以自行定义一些标准库中没有的方法。例如：</p>
+<p>剔除掉数组中满足条件的元素：</p>
+<pre><code>extension Array {
+    func reject(_ predicate: (Element) -&gt; Bool) -&gt; [Element] {
+        return filter { !predicate($0) }
+    }
+}
+</code></pre><p>我们只要把调用转发给filter，然后把指定的条件取反就好了。这样，剔除元素的代码语义上就会更好看一些：</p>
+<pre><code>fibonacci.reject { $0 % 2 == 0 } // [1, 1, 3, 5]
+</code></pre><p>另一个基于filter语义的常用操作是判断数组中是否存在满足条件的元素。下面的代码可以完成任务：</p>
+<pre><code>fibonacci.filter { $0 % 2 == 0 }.count &gt; 0 // true
+</code></pre><p>但这样做在性能上并不理想，因为即便找到了满足条件的元素，也要遍历完整个数组，这显然是没必要的。Swift标准库中，提供了一个更方便的方法：</p>
+<pre><code>fibonacci.contains { $0 % 2 == 0 } // true
+</code></pre><p>contains的一个好处就是只要遇到满足条件的元素，函数的执行就终止了。基于这个contains，我们还可以给Array添加一个新的方法，用来判断Array中所有的元素是否满足特定的条件：</p>
+<pre><code>extension Array {
+    func allMatch(_ predicate: (Element) -&gt; Bool) -&gt; Bool {
+        return !contains { !predicate($0) }
+    }
+}
+</code></pre><p>在allMatch的实现里，只要没有不满足条件的元素，也就是所有元素都满足条件了。我们可以用下面的代码测试一下：</p>
+<pre><code>let evens = [2, 4, 6, 8]
+evens.allMatch { $0 % 2 == 0 } // true
+</code></pre><h3 id="reduce和与reduce相关的语义"><a href="#reduce和与reduce相关的语义" class="headerlink" title="reduce和与reduce相关的语义"></a>reduce和与reduce相关的语义</h3><p>除了用一个数组生成一个新的数组，有时，我们会希望把一个数组变成某种形式的值。例如，之前我们提到的求和：</p>
+<pre><code>fibonacci.reduce(0, +) // 12
+</code></pre><p>了解reduce的进一步用法之前，我们先来自己实现一个：</p>
+<pre><code>extension Array {
+    func myReduce&lt;T&gt;(_ initial: T, _ next: (T, Element) -&gt; T) -&gt; T {
+        var tmp = initial
+            for value in self {
+                tmp = next(tmp, value)
+            }
+        return tmp
+    }
+}
+</code></pre><p>从上面的实现就可以看出，reduce的实现也没有什么神奇之处。无非就是把for循环迭代相加的过程封装了起来。然后，用下面的代码测试一下，就会发现和标准库中的reduce一样了。</p>
+<pre><code>fibonacci.myReduce(0, +) // 12
+</code></pre><p>除了求和之外，我们还可以把fibonacci reduce成一个字符串：</p>
+<pre><code>let str = fibonacci.myReduce(&quot;&quot;) { str, num in 
+    return str + &quot;\(num) &quot;
+}
+// &quot;0 1 1 2 3 5 &quot;
+</code></pre><p>甚至，我们还可以用reduce模拟map和filter的实现：</p>
+<pre><code>extension Array {
+    func myMap2&lt;T&gt;(_ transform: (Element) -&gt; T) -&gt; [T] {
+        return reduce([], { $0 + [transform($1)] })
+    }
+
+    func myFilter2(_ predicate: (Element) -&gt; Bool) -&gt; [Element] {
+        return reduce([], { predicate($1) ? $0 + [$1] : $0 })
+    }
+}
+</code></pre><p>然后，简单测试一下：</p>
+<pre><code>// [0, 1, 1, 4, 9, 25]
+fibonacci.myMap2 { $0 * $0 }
+// [0, 2]
+fibonacci.myFilter2 { $0 % 2 == 0 }
+</code></pre><p>它们的结果和标准库中的map和filter是一样的。但是，这种看似优雅的写法却没有想象中的那么好。在它们内部的reduce调用中，每一次$0的参数都是一个新建的数组，因此整个算法的复杂度是O(n2)，而不再是for循环版本的O(n)。所以，这样的实现方法最好还是用来作为理解reduce用法的例子。</p>
+<h3 id="flatMap"><a href="#flatMap" class="headerlink" title="flatMap"></a>flatMap</h3><p>最后，我们来了解flatMap。简单来说，如果你用在map中的closure参数不返回一个数组元素，而是也返回一个数组，这样，你就会得到一个数组的数组，但如果你只需要一个一维数组，flatMap就可以派上用场了，而这，也就是flat的含义。</p>
+<p>实际上，flatMap的实现很简单，只要在map内部的for循环里，不断把closure参数生成的数组的内容，添加到要返回的结果里就好了：</p>
+<pre><code>extension Array {
+    func myFlatMap&lt;T&gt;(_ transform: (Element) -&gt; [T]) -&gt; [T] {
+        var tmp: [T] = []
+            for value in self {
+                tmp.append(contentsOf: transform(value))
+            }
+            return tmp
+    }
+}
+</code></pre><p>用下面的代码测试，得到的结果，应该和之前使用flatMap是一样的：</p>
+<pre><code>animals.myFlatMap { animal in
+    return ids.map { id in (animal, id) }
+}
+</code></pre>
       
     </div>
     
@@ -432,8 +442,8 @@ array2.removeLast() // This will crash!!!
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/08/17/通过closure参数化数组元素的变形操作/" rel="next" title="通过closure参数化数组元素的变形操作">
-                <i class="fa fa-chevron-left"></i> 通过closure参数化数组元素的变形操作
+              <a href="/2016/08/17/Array和NSArray/" rel="next" title="理解Array和NSArray的差异">
+                <i class="fa fa-chevron-left"></i> 理解Array和NSArray的差异
               </a>
             
           </div>
@@ -441,10 +451,6 @@ array2.removeLast() // This will crash!!!
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/08/17/Array和NSArray/" rel="prev" title="理解Array和NSArray的差异">
-                理解Array和NSArray的差异 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -560,7 +566,7 @@ array2.removeLast() // This will crash!!!
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何创建一个Array？"><span class="nav-number">1.</span> <span class="nav-text">如何创建一个Array？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#两个常用的Array属性"><span class="nav-number">2.</span> <span class="nav-text">两个常用的Array属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#访问Array中的元素"><span class="nav-number">3.</span> <span class="nav-text">访问Array中的元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#遍历数组"><span class="nav-number">4.</span> <span class="nav-text">遍历数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加和删除元素"><span class="nav-number">5.</span> <span class="nav-text">添加和删除元素</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#filter和与filter类似的语义"><span class="nav-number">1.</span> <span class="nav-text">filter和与filter类似的语义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reduce和与reduce相关的语义"><span class="nav-number">2.</span> <span class="nav-text">reduce和与reduce相关的语义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flatMap"><span class="nav-number">3.</span> <span class="nav-text">flatMap</span></a></li></ol></div>
             
 
           </div>
