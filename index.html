@@ -260,6 +260,422 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/10/09/Swift中的函数/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pengyw">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Owl's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/10/09/Swift中的函数/" itemprop="url">Swift 中的函数</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-10-09T00:47:12+08:00">
+                2016-10-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h3><h4 id="定义可变长参数"><a href="#定义可变长参数" class="headerlink" title="定义可变长参数"></a>定义可变长参数</h4><p>如果我们要计算不确定个数参数的乘积该怎么办呢？Swift还允许我们通过下面的方式，定义可变长度的参数列表：</p>
+<pre><code>func mul(_ numbers: Int ...) {
+    let arrayMul = numbers.reduce(1, *)
+    print(&quot;mul: \(arrayMul)&quot;)
+}
+
+在上面的例子中，我们用numbers: Int...的形式，表示函数可以接受的Int参数的个数是可变的。实际上，numbers的类型，是一个Array&lt;Int&gt;，因此，为了计算乘积，我们直接使用Array类型的reduce方法就好了。
+
+定义好之后，我们可以这样调用它：
+
+mul(2, 3, 4, 5, 6, 7) // 5040
+</code></pre><h4 id="定义inout参数"><a href="#定义inout参数" class="headerlink" title="定义inout参数"></a>定义inout参数</h4><p>在Swift里，函数的参数有一个性质：默认情况下，参数是只读的，这也就意味着：</p>
+<blockquote>
+<ul>
+<li>你不能在函数内部修改参数值；</li>
+<li>你也不能通过函数参数对外返回值；</li>
+</ul>
+</blockquote>
+<p>先来看第一条：</p>
+<pre><code>func mul(result: Int, _ numbers: Int ...) {
+    result = numbers.reduce(1, *) // !!! Error here !!!
+    print(&quot;mul: \(result)&quot;)
+}
+</code></pre><p>在上面的实现里，函数的参数默认是个常量，因此编译器会提示你不能在函数内部对常量赋值。然后再来看第二条：如果我们希望参数可以被修改，并且把修改过的结果返回给传递进来的参数，该怎么办呢？</p>
+<p>其实，很简单，我们需要用inout关键字修饰一下参数的类型，明确告诉Swift编译器我们要修改这个参数的值：</p>
+<pre><code>func mul(result: inout Int, _ numbers: Int ...) {
+    result = numbers.reduce(1, *) // !!! Error here !!!
+    print(&quot;mul: \(result)&quot;)
+}
+</code></pre><p>然后，就可以这样来使用mul了：</p>
+<pre><code>var result = 0
+mul(result: &amp;result, 2, 3, 4, 5, 6, 7)
+result // 5040
+</code></pre><p>注意到了没？对于inout类型的参数，我们在调用函数的时候，也需要在参数前明确使用&amp;。这样，mul执行结束后，就可以看到result的值，变成了5040。</p>
+<h4 id="通过函数返回内容"><a href="#通过函数返回内容" class="headerlink" title="通过函数返回内容"></a>通过函数返回内容</h4><p>当然，通过参数来获取返回值只能算函数的某种副作用，更“正统”的做法，应该是把返回值放在函数的定义里，像这样：</p>
+<pre><code>func mul(_ numbers: Int ...) -&gt; Int {
+    return numbers.reduce(1, *)
+}
+</code></pre><p>我们通过-&gt; Type的方式，在参数列表后面定义返回值。然后，就可以用mul的返回值，来定义变量了：</p>
+<pre><code>let result = mul(2, 3, 4, 5, 6, 7) // 5040
+</code></pre><h3 id="Swift-3关于函数类型的一项重要提议"><a href="#Swift-3关于函数类型的一项重要提议" class="headerlink" title="Swift 3关于函数类型的一项重要提议"></a>Swift 3关于函数类型的一项重要提议</h3><p>对于一个函数来说，把它的参数和返回值放在一起，就形成了它的签名，这是用于描述函数自身属性的一种类型。为什么要把这个话题单独拿出来呢？这是因为在Swift 3的一项修正案里，对函数参数名称在签名中的地位进行了调整<a href="https://github.com/apple/swift-evolution/blob/master/proposals/0111-remove-arg-label-type-significance.md" target="_blank" rel="noopener">(详见SE-0111 Remove type system significance of function argument labels)</a>。而这项调整，存在着一些让人容易困惑的地方。</p>
+<h4 id="参数名称不再是函数类型的一部分"><a href="#参数名称不再是函数类型的一部分" class="headerlink" title="参数名称不再是函数类型的一部分"></a>参数名称不再是函数类型的一部分</h4><p>不过没关系，我们从一个简单的例子开始。对于上面，我们实现的mul：</p>
+<pre><code>func mul(m: Int, of n: Int) -&gt; Int {
+    return m * n
+}
+</code></pre><p>如果我们用type inference定义一个和mul类型相同的函数变量：</p>
+<pre><code>let fnMul = mul
+</code></pre><p>之后，我们该如何使用fnMul呢？在Swift 2里，是这样的：</p>
+<pre><code>// ONLY 6 in Swift 2
+// WRONG in Swift 3
+fnMul(m: 2, n: 3)
+</code></pre><p>而到了Swift 3里，编译器会报错：</p>
+<p>我们只能这样使用fnMul：</p>
+<pre><code>fnMul(2, 3) // 6
+</code></pre><p>这说明什么呢？从结果上来看m:n:已经在不再是mul签名的一部分了。在Swift 3里，mul和fnMul的类型，实际上都是：(Int, Int) -&gt; Int。</p>
+<p>然而，为什么要做这样的改动呢？我们继续来看一个在Swift 2中因为函数签名带来的诡异的问题。</p>
+<p>假设，我们还有一个用于计算整数除法的函数：</p>
+<pre><code>func div(a: Int, b: Int) -&gt; Int {
+    return a / b
+}
+</code></pre><p>然后，对于下面这段代码，你期望最后fnDiv得到什么结果呢？</p>
+<pre><code>// !!! Swift 2 ONLY !!!
+var fnDiv: (a: Int, b: Int) -&gt; Int = div
+fnDiv = mul
+
+fnDiv(a: 2, b: 3) // This will call mul(m: 2, n: 3)
+// !!! Swift 2 ONLY !!!
+</code></pre><p>结果会是6，fnDiv(a: 2, b: 3)实际上调用了mul。造成这个结果的原因有2：</p>
+<blockquote>
+<ul>
+<li>首先，mul和div都接受2个Int作为参数，并返回一个Int，因此，尽管它们的参数名不同，但它们的类型是兼容的，我们可以让fnDiv = mul；</li>
+<li>其次，由于参数名又是函数签名的一部分，我们使用fnDiv的时候，必须带上a:b:；</li>
+</ul>
+</blockquote>
+<p>因此，就造成了这种完全是div的用法，而暗地里执行了mul的错觉。如果这段代码隐藏在你的源文件中，你能轻易发现问题的原因么？</p>
+<p>正是由于这种原因，在Swift 3里，参数名不再是函数签名的一部分了，mul和div的类型都是(Int, Int) -&gt; Int。这样：</p>
+<blockquote>
+<ul>
+<li>之前我们定义的fnMul，只能用fnMul(2, 3)这样的形式调用；</li>
+<li>无论fnMul被赋值成任何函数，调用方式都是统一的：fnMul(num1, num2)，这样就不会有因为参数名带来的调用错觉了；</li>
+</ul>
+</blockquote>
+<h4 id="为什么管函数类型叫做“一等公民”？"><a href="#为什么管函数类型叫做“一等公民”？" class="headerlink" title="为什么管函数类型叫做“一等公民”？"></a>为什么管函数类型叫做“一等公民”？</h4><p>理解了函数类型之后，接下来我们来聊另外一个话题。你也许经常会听到类似“函数在Swift中是一等公民”这样的说法。然而，对一门编程语言来说，“一等公民”意味着什么呢？</p>
+<p>简单来说，就是 <strong>函数这种类型，和Swift其它类型有着完全相同的语法功能</strong>。它们主要包括：</p>
+<blockquote>
+<ul>
+<li>可以用来定义变量，例如我们之前定义的fnMul和fnDiv，这种类型的变量同样可以当作函数来调用；</li>
+<li>可以当成函数参数；</li>
+<li>可以被函数返回；</li>
+</ul>
+</blockquote>
+<p>而对于后两种情况之所以是很重要的语言特性，是因为它们构成了函数式编程的基础。例如，我们定义一个表达计算概念的函数：</p>
+<pre><code>func calc&lt;T&gt;(_ first: T,
+                        _ second: T,
+                        _ fn: (T, T) -&gt; T) -&gt; T {
+        return fn(first, second)
+}
+</code></pre><p>在这个函数的定义里，calc<t>就接受一个函数类型的参数，然后，我们可以像传递数字一样，来传递函数变量：</t></p>
+<pre><code>calc(2, 3, mul) // 6
+calc(2, 3, div) // 0
+</code></pre><p>类似的，我们也可以把函数类型当成返回值，例如下面这个有点儿特殊的mul方法：</p>
+<pre><code>func mul(_ a: Int) -&gt; (Int) -&gt; Int {
+    func innerMul(_ b: Int) -&gt; Int {
+        return a * b
+    }
+
+    return innerMul
+}
+</code></pre><p>它只接受一个参数，并返回一个函数，在返回的函数里，接受另外一个参数，并最终完成相乘的运算。因此，我们可以用两种不同的方式来调用它：</p>
+<pre><code>let mul2By = mul(2)
+mul2By(3) // 6
+
+mul(2)(3) // 6
+</code></pre><p>第一种方式，我们先用一个变量保存mul返回的函数，然后通过再传递一个单参数来最终完成运算。或者，我们可以直接通过()把两次函数调用串联起来。因此，尽管currying function在Swift 3中被废除了<a href="https://github.com/apple/swift-evolution/blob/master/proposals/0002-remove-currying.md" target="_blank" rel="noopener">(详见SE-0002 Removing currying func declaration syntax)</a>，但我们还是可以通过这样的方法来实现同样的效果。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/10/09/分支和循环中的高级方式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pengyw">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Owl's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/10/09/分支和循环中的高级方式/" itemprop="url">分支和循环中的高级方式</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-10-09T00:47:12+08:00">
+                2016-10-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="使用where约束条件"><a href="#使用where约束条件" class="headerlink" title="使用where约束条件"></a>使用where约束条件</h3><p>除了使用具体的数值对循环或分支条件进行约束外，我们还可以使用where进行更复杂的约束。先来看一个简单的例子：</p>
+<pre><code>for i in 1...10 where i % 2 == 0 {
+    print(i)
+}
+</code></pre><p>这里，我们在for循环中使用了where限定了进入循环的值必须是偶数，这要比我们在for循环内部再写一个if判断方便的多。</p>
+<p>或者，我们也可以把where用在更复杂的value binding语句里。例如，假设我们定义下面这样的enum表示手机电量：</p>
+<pre><code>enum Power {
+    case fullyCharged
+    case normal(percentage: Double)
+    case outOfPower
+}
+</code></pre><p>然后，定义一个变量battery表示手机电池：</p>
+<pre><code>let battery = Power.normal(percentage: 0.1)
+</code></pre><p>这样，我们就可以在绑定.normal associated value的同时，使用where进一步约束它的关联值了：</p>
+<pre><code>switch battery {
+case .normal(let percentage) where percentage &lt;= 0.1:
+    print(&quot;Almost out of power&quot;) 
+case .normal(let percentage) where percentage &gt;= 0.8:
+    print(&quot;Almost fully charged&quot;)
+default:
+    print(&quot;Normal battery status&quot;)
+}
+</code></pre><h3 id="使用逗号串联条件"><a href="#使用逗号串联条件" class="headerlink" title="使用逗号串联条件"></a>使用逗号串联条件</h3><p>switch中的多个case默认是不向下贯通的，因此，我们不能像C语言一样，通过罗列多个case来实现对多个条件统一处理的效果，要实现这样的效果，我们只能在一条case里，用逗号分隔多个情况：</p>
+<pre><code>switch halfPower {
+// ...
+case .fullyCharged, .outOfPower
+    print(&quot;Fully charged or out of power&quot;)
+// ...
+}
+</code></pre><p>逗号除了用在switch…case…中表示逻辑或的概念，也可以用在if中表示逻辑与的概念，例如为了处理之前电量低的情况，我们还可以用if这样来实现：</p>
+<pre><code>if case .normal(let percentage) = battery,
+    case 0...0.1 = percentage {
+    print(&quot;Almost out of power&quot;)
+}
+</code></pre><p>在上面的代码里，第一个if case使用value binding读取了battery中.normal的associated value。接下来，第二个case进一步约束了第一个case中关联到的值小于10%的情况。</p>
+<h3 id="使用tuple简化多个条件的比较"><a href="#使用tuple简化多个条件的比较" class="headerlink" title="使用tuple简化多个条件的比较"></a>使用tuple简化多个条件的比较</h3><p>有时，我们需要在if中同时比较多个条件。假设，我们有一对用户名和密码：</p>
+<pre><code>let username = &quot;zhangshan&quot;
+let password = 11111111
+</code></pre><p>当我们要同时比较这两个值时，最普通的写法，就是在if中使用逻辑与（&amp;&amp;）操作符：</p>
+<pre><code>if username == &quot;zhangshan&quot; &amp;&amp; password == 11111111 {
+    print(&quot;correct&quot;)
+}
+</code></pre><p>如果你不喜欢在if中并列多个比较语句，我们还可以用case临时生成一个tuple，并且，让它和username / password进行比较：</p>
+<pre><code>if case (&quot;zhangshan&quot;, 11111111) = (username, password) {
+    print(&quot;correct&quot;)
+}
+</code></pre><p>这样，当同时要比较的元素比较多时，这种写法用起来就方便很多</p>
+<h3 id="理解样式匹配的实现方式"><a href="#理解样式匹配的实现方式" class="headerlink" title="理解样式匹配的实现方式"></a>理解样式匹配的实现方式</h3><p>上面留了一个问题。为什么case 0…0.1 = percentage中，range operator必须写在左边呢？实际上，这和样式匹配的实现方式有关。具体来说，分为下面两种情况：</p>
+<p>首先，当要匹配的变量和样式的类型相同，并且对应的类型实现了Equatable protocol时，就直接使用对应类型的==操作符进行匹配。例如我们之前比较用户名和密码的例子：</p>
+<pre><code>let username = &quot;zhangshan&quot;
+let password = 11111111
+
+if case (&quot;zhangshan&quot;, 11111111) = (username, password) {
+    print(&quot;correct&quot;)
+}
+</code></pre><p>这里，就直接使用了Tuple类型的比较操作符。</p>
+<p>其次，如果样式和要匹配的变量类型不同，或对应类型没有实现Equaltable protocol时，Swift会使用~=操作符进行比较。当这个操作符返回true时，就认为条件匹配，否则就认为不匹配。因此，为了判断某个数值是否在某个范围里，Swift标准库中实现了Range ~= Value这种形式的比较，但是，却没有实现Value ~= Range这样的版本。</p>
+<p>因此，当我们写成case percentage = 0…0.1时，编译器就会因为找不到对应的操作符而报错了。不过，由于这个操作符是可以自定义的，因此，我们可以通过重载它，来实现上面的功能：</p>
+<pre><code>func ~=&lt;T&gt;(value: T, pattern: ClosedRange&lt;T&gt;) -&gt; Bool {
+    // 2
+    return pattern.contains(value)
+}
+</code></pre><p>为了能匹配不同的类型，我们把~=定义为了一个泛型函数。它的第一个参数表示~=的左操作数，按照我们的例子，应该是一个值；第二个参数表示~=的右操作数，它是一个ClosedRange<t>。在它的实现里，我们只要调用ClosedRange的contains方法，就可以实现“是否包含某个值”这样的语义了。</t></p>
+<p>而当我们重载了这个~=方法之后，之前发生编译错误的语句就可以正常工作了。我们也可以通过类似的方法，为自定义类型添加各种样式匹配规则。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/09/29/Filter:Reduce:FlatMap/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1985,7 +2401,7 @@ singleCharViews.map(String.init)
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">9</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

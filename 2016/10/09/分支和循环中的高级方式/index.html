@@ -94,17 +94,17 @@
 
 
 
-<meta name="description" content="如何创建一个Array？首先，我们可以通过下面三种方法定义一个空的Array： var array1: Array&amp;lt;Int&amp;gt; = Array&amp;lt;Int&amp;gt;() var array2: [Int] = [] var array3 = array2 在上面的代码中，前两种使用了type annotation，Array和[Int]没有区别，你可以根据自己的喜好来选择。而第三种，我们">
+<meta name="description" content="使用where约束条件除了使用具体的数值对循环或分支条件进行约束外，我们还可以使用where进行更复杂的约束。先来看一个简单的例子： for i in 1...10 where i % 2 == 0 {     print(i) } 这里，我们在for循环中使用了where限定了进入循环的值必须是偶数，这要比我们在for循环内部再写一个if判断方便的多。 或者，我们也可以把where用在更复杂的v">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Swift3 Array">
-<meta property="og:url" content="http://yoursite.com/2016/08/17/Swift3 Collectoins/index.html">
+<meta property="og:title" content="分支和循环中的高级方式">
+<meta property="og:url" content="http://yoursite.com/2016/10/09/分支和循环中的高级方式/index.html">
 <meta property="og:site_name" content="Owl&#39;s blog">
-<meta property="og:description" content="如何创建一个Array？首先，我们可以通过下面三种方法定义一个空的Array： var array1: Array&amp;lt;Int&amp;gt; = Array&amp;lt;Int&amp;gt;() var array2: [Int] = [] var array3 = array2 在上面的代码中，前两种使用了type annotation，Array和[Int]没有区别，你可以根据自己的喜好来选择。而第三种，我们">
+<meta property="og:description" content="使用where约束条件除了使用具体的数值对循环或分支条件进行约束外，我们还可以使用where进行更复杂的约束。先来看一个简单的例子： for i in 1...10 where i % 2 == 0 {     print(i) } 这里，我们在for循环中使用了where限定了进入循环的值必须是偶数，这要比我们在for循环内部再写一个if判断方便的多。 或者，我们也可以把where用在更复杂的v">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-09-17T08:54:19.936Z">
+<meta property="og:updated_time" content="2018-09-25T07:01:13.730Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Swift3 Array">
-<meta name="twitter:description" content="如何创建一个Array？首先，我们可以通过下面三种方法定义一个空的Array： var array1: Array&amp;lt;Int&amp;gt; = Array&amp;lt;Int&amp;gt;() var array2: [Int] = [] var array3 = array2 在上面的代码中，前两种使用了type annotation，Array和[Int]没有区别，你可以根据自己的喜好来选择。而第三种，我们">
+<meta name="twitter:title" content="分支和循环中的高级方式">
+<meta name="twitter:description" content="使用where约束条件除了使用具体的数值对循环或分支条件进行约束外，我们还可以使用where进行更复杂的约束。先来看一个简单的例子： for i in 1...10 where i % 2 == 0 {     print(i) } 这里，我们在for循环中使用了where限定了进入循环的值必须是偶数，这要比我们在for循环内部再写一个if判断方便的多。 或者，我们也可以把where用在更复杂的v">
 
 
 
@@ -133,13 +133,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/08/17/Swift3 Collectoins/"/>
+  <link rel="canonical" href="http://yoursite.com/2016/10/09/分支和循环中的高级方式/"/>
 
 
 
 
 
-  <title>Swift3 Array | Owl's blog</title>
+  <title>分支和循环中的高级方式 | Owl's blog</title>
   
 
 
@@ -262,7 +262,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/17/Swift3 Collectoins/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/10/09/分支和循环中的高级方式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="pengyw">
@@ -279,7 +279,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Swift3 Array</h1>
+          <h1 class="post-title" itemprop="name headline">分支和循环中的高级方式</h1>
         
 
         <div class="post-meta">
@@ -291,8 +291,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-08-17T01:57:18+08:00">
-                2016-08-17
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-10-09T00:47:12+08:00">
+                2016-10-09
               </time>
             
 
@@ -329,85 +329,70 @@
       
 
       
-        <h3 id="如何创建一个Array？"><a href="#如何创建一个Array？" class="headerlink" title="如何创建一个Array？"></a>如何创建一个Array？</h3><p>首先，我们可以通过下面三种方法定义一个空的Array：</p>
-<pre><code>var array1: Array&lt;Int&gt; = Array&lt;Int&gt;()
-var array2: [Int] = []
-var array3 = array2
-</code></pre><p>在上面的代码中，前两种使用了type annotation，Array<int>和[Int]没有区别，你可以根据自己的喜好来选择。而第三种，我们直接使用了一个空的Array生成了一个新的Array对象。</int></p>
-<p>其次，再来看一些定义数组时同时指定初始值的方法：</p>
-<pre><code>// [3, 3, 3]
-var threeInts = [Int](repeating: 3, count: 3)
-// [3, 3, 3, 3, 3, 3]
-var sixInts = threeInts + threeInts
-// [1, 2, 3, 4, 5]
-var fiveInts = [1, 2, 3, 4, 5]
-</code></pre><h3 id="两个常用的Array属性"><a href="#两个常用的Array属性" class="headerlink" title="两个常用的Array属性"></a>两个常用的Array属性</h3><p>定义好数组之后，我们介绍两个Array最常用的属性。第一个是count，类型是Int。我们之前已经用过，用于获取数组中元素的个数：</p>
-<pre><code>array1.count    // 0
-fiveInts.count  // 5
-</code></pre><p>第二个是isEmtpy，类型是Bool。表示数组是否为空：</p>
-<pre><code>if array2.isEmpty {
-    // array2 is empty
-    print(&quot;array2 is empty&quot;)
+        <h3 id="使用where约束条件"><a href="#使用where约束条件" class="headerlink" title="使用where约束条件"></a>使用where约束条件</h3><p>除了使用具体的数值对循环或分支条件进行约束外，我们还可以使用where进行更复杂的约束。先来看一个简单的例子：</p>
+<pre><code>for i in 1...10 where i % 2 == 0 {
+    print(i)
 }
-</code></pre><h3 id="访问Array中的元素"><a href="#访问Array中的元素" class="headerlink" title="访问Array中的元素"></a>访问Array中的元素</h3><p>首先是索引访问：</p>
-<pre><code>fiveInts[2] // 3
-fiveInts[5] // This will crash
-</code></pre><p>就像，上面例子中这样。当使用索引访问数组元素时，<strong>你必须自行确保索引的安全性</strong>。如果索引超过了数组的范围，程序就会直接崩溃。其实，在Swift里，我们几乎不需要直接使用索引来访问数组元素。稍后，我们会专门提到Array的惯用法。因此，Swift开发者也没有对索引访问添加任何安全保护。言外之意就是，非要用，你自己对结果全权负责。</p>
-<p>其次，是使用range operator访问数组的一个范围：</p>
-<pre><code>fiveInts[0...2] // [1, 2, 3]
-fiveInts[0..&lt;2] // [1, 2]
-</code></pre><p>要说明的是，使用range operator得到的，并不是一个Array，而是一个ArraySlice。什么是ArraySlice呢？简单来说，就是Array某一段内容的view，它不真正保存数组的内容，只保存这个view引用的数组的范围：</p>
-<pre><code>// +---------+---+
-// | length  | 5 |
-// +---------+---+
-// | storage ptr |
-// +---------+---+
-//           |
-//           v
-//           +---+---+---+---+---+---------------------+
-//           | 1 | 2 | 3 | 4 | 5 |  reserved capacity  |
-//           +---+---+---+---+---+---------------------+
-//           ^
-//           |
-// +---------+---+
-// | storage ptr |
-// +---------+---+
-// | beg idx | 0 |
-// +---------+---+
-// | end idx | 3 |  ArraySlice for [0...2]
-// +---------+---+
-</code></pre><p>从上面这个注释，就很容易理解view的概念了，它只记录了要表达内容的区间。但是我们也可以直接通过这个view创建新的Array对象：</p>
-<pre><code>Array(fiveInts[0...2]) // [1, 2, 3]
-</code></pre><p>这样，就得到了一个值是[1, 2, 3]的Array对象。</p>
-<h3 id="遍历数组"><a href="#遍历数组" class="headerlink" title="遍历数组"></a>遍历数组</h3><p>首先，当然是我们最熟悉的for循环的方式：</p>
-<pre><code>for value in fiveInts {
-    print(value)
+</code></pre><p>这里，我们在for循环中使用了where限定了进入循环的值必须是偶数，这要比我们在for循环内部再写一个if判断方便的多。</p>
+<p>或者，我们也可以把where用在更复杂的value binding语句里。例如，假设我们定义下面这样的enum表示手机电量：</p>
+<pre><code>enum Power {
+    case fullyCharged
+    case normal(percentage: Double)
+    case outOfPower
 }
-// 1 
-// 2
+</code></pre><p>然后，定义一个变量battery表示手机电池：</p>
+<pre><code>let battery = Power.normal(percentage: 0.1)
+</code></pre><p>这样，我们就可以在绑定.normal associated value的同时，使用where进一步约束它的关联值了：</p>
+<pre><code>switch battery {
+case .normal(let percentage) where percentage &lt;= 0.1:
+    print(&quot;Almost out of power&quot;) 
+case .normal(let percentage) where percentage &gt;= 0.8:
+    print(&quot;Almost fully charged&quot;)
+default:
+    print(&quot;Normal battery status&quot;)
+}
+</code></pre><h3 id="使用逗号串联条件"><a href="#使用逗号串联条件" class="headerlink" title="使用逗号串联条件"></a>使用逗号串联条件</h3><p>switch中的多个case默认是不向下贯通的，因此，我们不能像C语言一样，通过罗列多个case来实现对多个条件统一处理的效果，要实现这样的效果，我们只能在一条case里，用逗号分隔多个情况：</p>
+<pre><code>switch halfPower {
 // ...
-</code></pre><p>其次，如果我们想在遍历的时候，同时获得数组的索引和值，可以使用数组对象的enumerated()方法，它会返回一个Sequence对象，包含了每个成员的索引和值，我们同样可以在for循环中，依次访问它们：</p>
-<pre><code>for (index, value) in fiveInts.enumerated() {
-    print(&quot;\(index): \(value)&quot;)
-}
-// 0: 1
-// 1: 2
+case .fullyCharged, .outOfPower
+    print(&quot;Fully charged or out of power&quot;)
 // ...
-</code></pre><p>第三，借助closure，我们还可以使用Array对象的forEach方法：</p>
-<pre><code>fiveInts.forEach { print($0) }
-</code></pre><h3 id="添加和删除元素"><a href="#添加和删除元素" class="headerlink" title="添加和删除元素"></a>添加和删除元素</h3><p>最后，来看如何编辑Array中的元素。要在数组的末尾添加元素，我们可以这样：</p>
-<pre><code>array1.append(1)     // [1]
-array1 += [2, 3, 4]  // [1, 2, 3, 4]
-</code></pre><p>要在Array中间位置添加元素，可以使用insert方法：</p>
-<pre><code>// [1, 2, 3, 4, 5]
-array1.insert(5, at: array1.endIndex)
-</code></pre><p>它的第一个参数表示要插入的值，第二个参数表示要插入的位置，这个位置必须是一个合法的范围，即0…array1.endIndex，如果超出这个范围，会直接引发运行时错误。</p>
-<p>要删除Array中的元素，可以使用remove(at:)方法，它只接受一个参数，表示要删除元素的位置：</p>
-<pre><code>array1.remove(at: 4) // [1, 2, 3, 4]
-</code></pre><p>同样，你必须自行保证使用的at参数不超过数组的合法范围，否则会引发运行时错误。当然，如果你仅仅想删除数组中的最后一个元素，还可以使用removeLast()方法：</p>
-<pre><code>array1.removeLast() // [1, 2, 3]
-array2.removeLast() // This will crash!!!
-</code></pre><p>从上面的例子可以看到，你同样要对removeLast()的应用安全负责，当你删除一个空数组中最后一个元素的时候，会直接引发运行时错误。</p>
+}
+</code></pre><p>逗号除了用在switch…case…中表示逻辑或的概念，也可以用在if中表示逻辑与的概念，例如为了处理之前电量低的情况，我们还可以用if这样来实现：</p>
+<pre><code>if case .normal(let percentage) = battery,
+    case 0...0.1 = percentage {
+    print(&quot;Almost out of power&quot;)
+}
+</code></pre><p>在上面的代码里，第一个if case使用value binding读取了battery中.normal的associated value。接下来，第二个case进一步约束了第一个case中关联到的值小于10%的情况。</p>
+<h3 id="使用tuple简化多个条件的比较"><a href="#使用tuple简化多个条件的比较" class="headerlink" title="使用tuple简化多个条件的比较"></a>使用tuple简化多个条件的比较</h3><p>有时，我们需要在if中同时比较多个条件。假设，我们有一对用户名和密码：</p>
+<pre><code>let username = &quot;zhangshan&quot;
+let password = 11111111
+</code></pre><p>当我们要同时比较这两个值时，最普通的写法，就是在if中使用逻辑与（&amp;&amp;）操作符：</p>
+<pre><code>if username == &quot;zhangshan&quot; &amp;&amp; password == 11111111 {
+    print(&quot;correct&quot;)
+}
+</code></pre><p>如果你不喜欢在if中并列多个比较语句，我们还可以用case临时生成一个tuple，并且，让它和username / password进行比较：</p>
+<pre><code>if case (&quot;zhangshan&quot;, 11111111) = (username, password) {
+    print(&quot;correct&quot;)
+}
+</code></pre><p>这样，当同时要比较的元素比较多时，这种写法用起来就方便很多</p>
+<h3 id="理解样式匹配的实现方式"><a href="#理解样式匹配的实现方式" class="headerlink" title="理解样式匹配的实现方式"></a>理解样式匹配的实现方式</h3><p>上面留了一个问题。为什么case 0…0.1 = percentage中，range operator必须写在左边呢？实际上，这和样式匹配的实现方式有关。具体来说，分为下面两种情况：</p>
+<p>首先，当要匹配的变量和样式的类型相同，并且对应的类型实现了Equatable protocol时，就直接使用对应类型的==操作符进行匹配。例如我们之前比较用户名和密码的例子：</p>
+<pre><code>let username = &quot;zhangshan&quot;
+let password = 11111111
+
+if case (&quot;zhangshan&quot;, 11111111) = (username, password) {
+    print(&quot;correct&quot;)
+}
+</code></pre><p>这里，就直接使用了Tuple类型的比较操作符。</p>
+<p>其次，如果样式和要匹配的变量类型不同，或对应类型没有实现Equaltable protocol时，Swift会使用~=操作符进行比较。当这个操作符返回true时，就认为条件匹配，否则就认为不匹配。因此，为了判断某个数值是否在某个范围里，Swift标准库中实现了Range ~= Value这种形式的比较，但是，却没有实现Value ~= Range这样的版本。</p>
+<p>因此，当我们写成case percentage = 0…0.1时，编译器就会因为找不到对应的操作符而报错了。不过，由于这个操作符是可以自定义的，因此，我们可以通过重载它，来实现上面的功能：</p>
+<pre><code>func ~=&lt;T&gt;(value: T, pattern: ClosedRange&lt;T&gt;) -&gt; Bool {
+    // 2
+    return pattern.contains(value)
+}
+</code></pre><p>为了能匹配不同的类型，我们把~=定义为了一个泛型函数。它的第一个参数表示~=的左操作数，按照我们的例子，应该是一个值；第二个参数表示~=的右操作数，它是一个ClosedRange<t>。在它的实现里，我们只要调用ClosedRange的contains方法，就可以实现“是否包含某个值”这样的语义了。</t></p>
+<p>而当我们重载了这个~=方法之后，之前发生编译错误的语句就可以正常工作了。我们也可以通过类似的方法，为自定义类型添加各种样式匹配规则。</p>
 
       
     </div>
@@ -432,8 +417,8 @@ array2.removeLast() // This will crash!!!
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/08/17/通过closure参数化数组元素的变形操作/" rel="next" title="通过closure参数化数组元素的变形操作">
-                <i class="fa fa-chevron-left"></i> 通过closure参数化数组元素的变形操作
+              <a href="/2016/09/29/Filter:Reduce:FlatMap/" rel="next" title="Filter / Reduce / FlatMap的实现和扩展">
+                <i class="fa fa-chevron-left"></i> Filter / Reduce / FlatMap的实现和扩展
               </a>
             
           </div>
@@ -442,8 +427,8 @@ array2.removeLast() // This will crash!!!
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/08/17/Array和NSArray/" rel="prev" title="理解Array和NSArray的差异">
-                理解Array和NSArray的差异 <i class="fa fa-chevron-right"></i>
+              <a href="/2016/10/09/Swift中的函数/" rel="prev" title="Swift 中的函数">
+                Swift 中的函数 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -560,7 +545,7 @@ array2.removeLast() // This will crash!!!
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何创建一个Array？"><span class="nav-number">1.</span> <span class="nav-text">如何创建一个Array？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#两个常用的Array属性"><span class="nav-number">2.</span> <span class="nav-text">两个常用的Array属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#访问Array中的元素"><span class="nav-number">3.</span> <span class="nav-text">访问Array中的元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#遍历数组"><span class="nav-number">4.</span> <span class="nav-text">遍历数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加和删除元素"><span class="nav-number">5.</span> <span class="nav-text">添加和删除元素</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用where约束条件"><span class="nav-number">1.</span> <span class="nav-text">使用where约束条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用逗号串联条件"><span class="nav-number">2.</span> <span class="nav-text">使用逗号串联条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用tuple简化多个条件的比较"><span class="nav-number">3.</span> <span class="nav-text">使用tuple简化多个条件的比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理解样式匹配的实现方式"><span class="nav-number">4.</span> <span class="nav-text">理解样式匹配的实现方式</span></a></li></ol></div>
             
 
           </div>

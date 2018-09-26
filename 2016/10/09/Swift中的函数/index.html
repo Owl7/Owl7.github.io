@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="基本用法定义可变长参数如果我们要计算不确定个数参数的乘积该怎么办呢？Swift还允许我们通过下面的方式，定义可变长度的参数列表： func mul(_ numbers: Int ...) {     let arrayMul = numbers.reduce(1, *)     print(&amp;quot;mul: \(arrayMul)&amp;quot;) }  在上面的例子中，我们用numbers: I">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift 中的函数">
+<meta property="og:url" content="http://yoursite.com/2016/10/09/Swift中的函数/index.html">
+<meta property="og:site_name" content="Owl&#39;s blog">
+<meta property="og:description" content="基本用法定义可变长参数如果我们要计算不确定个数参数的乘积该怎么办呢？Swift还允许我们通过下面的方式，定义可变长度的参数列表： func mul(_ numbers: Int ...) {     let arrayMul = numbers.reduce(1, *)     print(&amp;quot;mul: \(arrayMul)&amp;quot;) }  在上面的例子中，我们用numbers: I">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-26T00:59:29.843Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Swift 中的函数">
+<meta name="twitter:description" content="基本用法定义可变长参数如果我们要计算不确定个数参数的乘积该怎么办呢？Swift还允许我们通过下面的方式，定义可变长度的参数列表： func mul(_ numbers: Int ...) {     let arrayMul = numbers.reduce(1, *)     print(&amp;quot;mul: \(arrayMul)&amp;quot;) }  在上面的例子中，我们用numbers: I">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/10/09/Swift中的函数/"/>
+
+
+
+
+
+  <title>Swift 中的函数 | Owl's blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Owl's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/10/09/Swift中的函数/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pengyw">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Owl's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Swift 中的函数</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-10-09T00:47:12+08:00">
+                2016-10-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="基本用法"><a href="#基本用法" class="headerlink" title="基本用法"></a>基本用法</h3><h4 id="定义可变长参数"><a href="#定义可变长参数" class="headerlink" title="定义可变长参数"></a>定义可变长参数</h4><p>如果我们要计算不确定个数参数的乘积该怎么办呢？Swift还允许我们通过下面的方式，定义可变长度的参数列表：</p>
+<pre><code>func mul(_ numbers: Int ...) {
+    let arrayMul = numbers.reduce(1, *)
+    print(&quot;mul: \(arrayMul)&quot;)
+}
+
+在上面的例子中，我们用numbers: Int...的形式，表示函数可以接受的Int参数的个数是可变的。实际上，numbers的类型，是一个Array&lt;Int&gt;，因此，为了计算乘积，我们直接使用Array类型的reduce方法就好了。
+
+定义好之后，我们可以这样调用它：
+
+mul(2, 3, 4, 5, 6, 7) // 5040
+</code></pre><h4 id="定义inout参数"><a href="#定义inout参数" class="headerlink" title="定义inout参数"></a>定义inout参数</h4><p>在Swift里，函数的参数有一个性质：默认情况下，参数是只读的，这也就意味着：</p>
+<blockquote>
+<ul>
+<li>你不能在函数内部修改参数值；</li>
+<li>你也不能通过函数参数对外返回值；</li>
+</ul>
+</blockquote>
+<p>先来看第一条：</p>
+<pre><code>func mul(result: Int, _ numbers: Int ...) {
+    result = numbers.reduce(1, *) // !!! Error here !!!
+    print(&quot;mul: \(result)&quot;)
+}
+</code></pre><p>在上面的实现里，函数的参数默认是个常量，因此编译器会提示你不能在函数内部对常量赋值。然后再来看第二条：如果我们希望参数可以被修改，并且把修改过的结果返回给传递进来的参数，该怎么办呢？</p>
+<p>其实，很简单，我们需要用inout关键字修饰一下参数的类型，明确告诉Swift编译器我们要修改这个参数的值：</p>
+<pre><code>func mul(result: inout Int, _ numbers: Int ...) {
+    result = numbers.reduce(1, *) // !!! Error here !!!
+    print(&quot;mul: \(result)&quot;)
+}
+</code></pre><p>然后，就可以这样来使用mul了：</p>
+<pre><code>var result = 0
+mul(result: &amp;result, 2, 3, 4, 5, 6, 7)
+result // 5040
+</code></pre><p>注意到了没？对于inout类型的参数，我们在调用函数的时候，也需要在参数前明确使用&amp;。这样，mul执行结束后，就可以看到result的值，变成了5040。</p>
+<h4 id="通过函数返回内容"><a href="#通过函数返回内容" class="headerlink" title="通过函数返回内容"></a>通过函数返回内容</h4><p>当然，通过参数来获取返回值只能算函数的某种副作用，更“正统”的做法，应该是把返回值放在函数的定义里，像这样：</p>
+<pre><code>func mul(_ numbers: Int ...) -&gt; Int {
+    return numbers.reduce(1, *)
+}
+</code></pre><p>我们通过-&gt; Type的方式，在参数列表后面定义返回值。然后，就可以用mul的返回值，来定义变量了：</p>
+<pre><code>let result = mul(2, 3, 4, 5, 6, 7) // 5040
+</code></pre><h3 id="Swift-3关于函数类型的一项重要提议"><a href="#Swift-3关于函数类型的一项重要提议" class="headerlink" title="Swift 3关于函数类型的一项重要提议"></a>Swift 3关于函数类型的一项重要提议</h3><p>对于一个函数来说，把它的参数和返回值放在一起，就形成了它的签名，这是用于描述函数自身属性的一种类型。为什么要把这个话题单独拿出来呢？这是因为在Swift 3的一项修正案里，对函数参数名称在签名中的地位进行了调整<a href="https://github.com/apple/swift-evolution/blob/master/proposals/0111-remove-arg-label-type-significance.md" target="_blank" rel="noopener">(详见SE-0111 Remove type system significance of function argument labels)</a>。而这项调整，存在着一些让人容易困惑的地方。</p>
+<h4 id="参数名称不再是函数类型的一部分"><a href="#参数名称不再是函数类型的一部分" class="headerlink" title="参数名称不再是函数类型的一部分"></a>参数名称不再是函数类型的一部分</h4><p>不过没关系，我们从一个简单的例子开始。对于上面，我们实现的mul：</p>
+<pre><code>func mul(m: Int, of n: Int) -&gt; Int {
+    return m * n
+}
+</code></pre><p>如果我们用type inference定义一个和mul类型相同的函数变量：</p>
+<pre><code>let fnMul = mul
+</code></pre><p>之后，我们该如何使用fnMul呢？在Swift 2里，是这样的：</p>
+<pre><code>// ONLY 6 in Swift 2
+// WRONG in Swift 3
+fnMul(m: 2, n: 3)
+</code></pre><p>而到了Swift 3里，编译器会报错：</p>
+<p>我们只能这样使用fnMul：</p>
+<pre><code>fnMul(2, 3) // 6
+</code></pre><p>这说明什么呢？从结果上来看m:n:已经在不再是mul签名的一部分了。在Swift 3里，mul和fnMul的类型，实际上都是：(Int, Int) -&gt; Int。</p>
+<p>然而，为什么要做这样的改动呢？我们继续来看一个在Swift 2中因为函数签名带来的诡异的问题。</p>
+<p>假设，我们还有一个用于计算整数除法的函数：</p>
+<pre><code>func div(a: Int, b: Int) -&gt; Int {
+    return a / b
+}
+</code></pre><p>然后，对于下面这段代码，你期望最后fnDiv得到什么结果呢？</p>
+<pre><code>// !!! Swift 2 ONLY !!!
+var fnDiv: (a: Int, b: Int) -&gt; Int = div
+fnDiv = mul
+
+fnDiv(a: 2, b: 3) // This will call mul(m: 2, n: 3)
+// !!! Swift 2 ONLY !!!
+</code></pre><p>结果会是6，fnDiv(a: 2, b: 3)实际上调用了mul。造成这个结果的原因有2：</p>
+<blockquote>
+<ul>
+<li>首先，mul和div都接受2个Int作为参数，并返回一个Int，因此，尽管它们的参数名不同，但它们的类型是兼容的，我们可以让fnDiv = mul；</li>
+<li>其次，由于参数名又是函数签名的一部分，我们使用fnDiv的时候，必须带上a:b:；</li>
+</ul>
+</blockquote>
+<p>因此，就造成了这种完全是div的用法，而暗地里执行了mul的错觉。如果这段代码隐藏在你的源文件中，你能轻易发现问题的原因么？</p>
+<p>正是由于这种原因，在Swift 3里，参数名不再是函数签名的一部分了，mul和div的类型都是(Int, Int) -&gt; Int。这样：</p>
+<blockquote>
+<ul>
+<li>之前我们定义的fnMul，只能用fnMul(2, 3)这样的形式调用；</li>
+<li>无论fnMul被赋值成任何函数，调用方式都是统一的：fnMul(num1, num2)，这样就不会有因为参数名带来的调用错觉了；</li>
+</ul>
+</blockquote>
+<h4 id="为什么管函数类型叫做“一等公民”？"><a href="#为什么管函数类型叫做“一等公民”？" class="headerlink" title="为什么管函数类型叫做“一等公民”？"></a>为什么管函数类型叫做“一等公民”？</h4><p>理解了函数类型之后，接下来我们来聊另外一个话题。你也许经常会听到类似“函数在Swift中是一等公民”这样的说法。然而，对一门编程语言来说，“一等公民”意味着什么呢？</p>
+<p>简单来说，就是 <strong>函数这种类型，和Swift其它类型有着完全相同的语法功能</strong>。它们主要包括：</p>
+<blockquote>
+<ul>
+<li>可以用来定义变量，例如我们之前定义的fnMul和fnDiv，这种类型的变量同样可以当作函数来调用；</li>
+<li>可以当成函数参数；</li>
+<li>可以被函数返回；</li>
+</ul>
+</blockquote>
+<p>而对于后两种情况之所以是很重要的语言特性，是因为它们构成了函数式编程的基础。例如，我们定义一个表达计算概念的函数：</p>
+<pre><code>func calc&lt;T&gt;(_ first: T,
+                        _ second: T,
+                        _ fn: (T, T) -&gt; T) -&gt; T {
+        return fn(first, second)
+}
+</code></pre><p>在这个函数的定义里，calc<t>就接受一个函数类型的参数，然后，我们可以像传递数字一样，来传递函数变量：</t></p>
+<pre><code>calc(2, 3, mul) // 6
+calc(2, 3, div) // 0
+</code></pre><p>类似的，我们也可以把函数类型当成返回值，例如下面这个有点儿特殊的mul方法：</p>
+<pre><code>func mul(_ a: Int) -&gt; (Int) -&gt; Int {
+    func innerMul(_ b: Int) -&gt; Int {
+        return a * b
+    }
+
+    return innerMul
+}
+</code></pre><p>它只接受一个参数，并返回一个函数，在返回的函数里，接受另外一个参数，并最终完成相乘的运算。因此，我们可以用两种不同的方式来调用它：</p>
+<pre><code>let mul2By = mul(2)
+mul2By(3) // 6
+
+mul(2)(3) // 6
+</code></pre><p>第一种方式，我们先用一个变量保存mul返回的函数，然后通过再传递一个单参数来最终完成运算。或者，我们可以直接通过()把两次函数调用串联起来。因此，尽管currying function在Swift 3中被废除了<a href="https://github.com/apple/swift-evolution/blob/master/proposals/0002-remove-currying.md" target="_blank" rel="noopener">(详见SE-0002 Removing currying func declaration syntax)</a>，但我们还是可以通过这样的方法来实现同样的效果。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/09/分支和循环中的高级方式/" rel="next" title="分支和循环中的高级方式">
+                <i class="fa fa-chevron-left"></i> 分支和循环中的高级方式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="pengyw" />
+          <p class="site-author-name" itemprop="name">pengyw</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本用法"><span class="nav-number">1.</span> <span class="nav-text">基本用法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#定义可变长参数"><span class="nav-number">1.1.</span> <span class="nav-text">定义可变长参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#定义inout参数"><span class="nav-number">1.2.</span> <span class="nav-text">定义inout参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#通过函数返回内容"><span class="nav-number">1.3.</span> <span class="nav-text">通过函数返回内容</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Swift-3关于函数类型的一项重要提议"><span class="nav-number">2.</span> <span class="nav-text">Swift 3关于函数类型的一项重要提议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参数名称不再是函数类型的一部分"><span class="nav-number">2.1.</span> <span class="nav-text">参数名称不再是函数类型的一部分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为什么管函数类型叫做“一等公民”？"><span class="nav-number">2.2.</span> <span class="nav-text">为什么管函数类型叫做“一等公民”？</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pengyw</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
