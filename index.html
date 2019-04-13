@@ -1454,204 +1454,6 @@ for i in stride(from: 1.0, through: 5.0, by: 1.0) {
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/17/Swift3 Collectoins/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="pengyw">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Owl's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2016/08/17/Swift3 Collectoins/" itemprop="url">Swift3 Array</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-08-17T01:57:18+08:00">
-                2016-08-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="如何创建一个Array？"><a href="#如何创建一个Array？" class="headerlink" title="如何创建一个Array？"></a>如何创建一个Array？</h3><p>首先，我们可以通过下面三种方法定义一个空的Array：</p>
-<pre><code>var array1: Array&lt;Int&gt; = Array&lt;Int&gt;()
-var array2: [Int] = []
-var array3 = array2
-</code></pre><p>在上面的代码中，前两种使用了type annotation，Array<int>和[Int]没有区别，你可以根据自己的喜好来选择。而第三种，我们直接使用了一个空的Array生成了一个新的Array对象。</int></p>
-<p>其次，再来看一些定义数组时同时指定初始值的方法：</p>
-<pre><code>// [3, 3, 3]
-var threeInts = [Int](repeating: 3, count: 3)
-// [3, 3, 3, 3, 3, 3]
-var sixInts = threeInts + threeInts
-// [1, 2, 3, 4, 5]
-var fiveInts = [1, 2, 3, 4, 5]
-</code></pre><h3 id="两个常用的Array属性"><a href="#两个常用的Array属性" class="headerlink" title="两个常用的Array属性"></a>两个常用的Array属性</h3><p>定义好数组之后，我们介绍两个Array最常用的属性。第一个是count，类型是Int。我们之前已经用过，用于获取数组中元素的个数：</p>
-<pre><code>array1.count    // 0
-fiveInts.count  // 5
-</code></pre><p>第二个是isEmtpy，类型是Bool。表示数组是否为空：</p>
-<pre><code>if array2.isEmpty {
-    // array2 is empty
-    print(&quot;array2 is empty&quot;)
-}
-</code></pre><h3 id="访问Array中的元素"><a href="#访问Array中的元素" class="headerlink" title="访问Array中的元素"></a>访问Array中的元素</h3><p>首先是索引访问：</p>
-<pre><code>fiveInts[2] // 3
-fiveInts[5] // This will crash
-</code></pre><p>就像，上面例子中这样。当使用索引访问数组元素时，<strong>你必须自行确保索引的安全性</strong>。如果索引超过了数组的范围，程序就会直接崩溃。其实，在Swift里，我们几乎不需要直接使用索引来访问数组元素。稍后，我们会专门提到Array的惯用法。因此，Swift开发者也没有对索引访问添加任何安全保护。言外之意就是，非要用，你自己对结果全权负责。</p>
-<p>其次，是使用range operator访问数组的一个范围：</p>
-<pre><code>fiveInts[0...2] // [1, 2, 3]
-fiveInts[0..&lt;2] // [1, 2]
-</code></pre><p>要说明的是，使用range operator得到的，并不是一个Array，而是一个ArraySlice。什么是ArraySlice呢？简单来说，就是Array某一段内容的view，它不真正保存数组的内容，只保存这个view引用的数组的范围：</p>
-<pre><code>// +---------+---+
-// | length  | 5 |
-// +---------+---+
-// | storage ptr |
-// +---------+---+
-//           |
-//           v
-//           +---+---+---+---+---+---------------------+
-//           | 1 | 2 | 3 | 4 | 5 |  reserved capacity  |
-//           +---+---+---+---+---+---------------------+
-//           ^
-//           |
-// +---------+---+
-// | storage ptr |
-// +---------+---+
-// | beg idx | 0 |
-// +---------+---+
-// | end idx | 3 |  ArraySlice for [0...2]
-// +---------+---+
-</code></pre><p>从上面这个注释，就很容易理解view的概念了，它只记录了要表达内容的区间。但是我们也可以直接通过这个view创建新的Array对象：</p>
-<pre><code>Array(fiveInts[0...2]) // [1, 2, 3]
-</code></pre><p>这样，就得到了一个值是[1, 2, 3]的Array对象。</p>
-<h3 id="遍历数组"><a href="#遍历数组" class="headerlink" title="遍历数组"></a>遍历数组</h3><p>首先，当然是我们最熟悉的for循环的方式：</p>
-<pre><code>for value in fiveInts {
-    print(value)
-}
-// 1 
-// 2
-// ...
-</code></pre><p>其次，如果我们想在遍历的时候，同时获得数组的索引和值，可以使用数组对象的enumerated()方法，它会返回一个Sequence对象，包含了每个成员的索引和值，我们同样可以在for循环中，依次访问它们：</p>
-<pre><code>for (index, value) in fiveInts.enumerated() {
-    print(&quot;\(index): \(value)&quot;)
-}
-// 0: 1
-// 1: 2
-// ...
-</code></pre><p>第三，借助closure，我们还可以使用Array对象的forEach方法：</p>
-<pre><code>fiveInts.forEach { print($0) }
-</code></pre><h3 id="添加和删除元素"><a href="#添加和删除元素" class="headerlink" title="添加和删除元素"></a>添加和删除元素</h3><p>最后，来看如何编辑Array中的元素。要在数组的末尾添加元素，我们可以这样：</p>
-<pre><code>array1.append(1)     // [1]
-array1 += [2, 3, 4]  // [1, 2, 3, 4]
-</code></pre><p>要在Array中间位置添加元素，可以使用insert方法：</p>
-<pre><code>// [1, 2, 3, 4, 5]
-array1.insert(5, at: array1.endIndex)
-</code></pre><p>它的第一个参数表示要插入的值，第二个参数表示要插入的位置，这个位置必须是一个合法的范围，即0…array1.endIndex，如果超出这个范围，会直接引发运行时错误。</p>
-<p>要删除Array中的元素，可以使用remove(at:)方法，它只接受一个参数，表示要删除元素的位置：</p>
-<pre><code>array1.remove(at: 4) // [1, 2, 3, 4]
-</code></pre><p>同样，你必须自行保证使用的at参数不超过数组的合法范围，否则会引发运行时错误。当然，如果你仅仅想删除数组中的最后一个元素，还可以使用removeLast()方法：</p>
-<pre><code>array1.removeLast() // [1, 2, 3]
-array2.removeLast() // This will crash!!!
-</code></pre><p>从上面的例子可以看到，你同样要对removeLast()的应用安全负责，当你删除一个空数组中最后一个元素的时候，会直接引发运行时错误。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/17/Array和NSArray/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1810,6 +1612,204 @@ type(of: a.first) // Optional&lt;Int&gt;.Type
 </blockquote>
 <p>为什么要如此呢？一个最通俗的解释就是，为了表意更清晰的代码。</p>
 <p>当你基于Array实现诸如栈这样后入先出的数据结构时，弹出一个元素并判断是否为空是一个常规的操作，所以popLast返回了一个optional。而对于更一般的“删除数组中最后一个元素”这样的行为，Swift认为，这没有任何更具体的使用场景，你应该自己对这样的“低级操作”负责。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/17/Swift3 Collectoins/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pengyw">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Owl's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/08/17/Swift3 Collectoins/" itemprop="url">Swift3 Array</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-08-17T01:57:18+08:00">
+                2016-08-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="如何创建一个Array？"><a href="#如何创建一个Array？" class="headerlink" title="如何创建一个Array？"></a>如何创建一个Array？</h3><p>首先，我们可以通过下面三种方法定义一个空的Array：</p>
+<pre><code>var array1: Array&lt;Int&gt; = Array&lt;Int&gt;()
+var array2: [Int] = []
+var array3 = array2
+</code></pre><p>在上面的代码中，前两种使用了type annotation，Array<int>和[Int]没有区别，你可以根据自己的喜好来选择。而第三种，我们直接使用了一个空的Array生成了一个新的Array对象。</int></p>
+<p>其次，再来看一些定义数组时同时指定初始值的方法：</p>
+<pre><code>// [3, 3, 3]
+var threeInts = [Int](repeating: 3, count: 3)
+// [3, 3, 3, 3, 3, 3]
+var sixInts = threeInts + threeInts
+// [1, 2, 3, 4, 5]
+var fiveInts = [1, 2, 3, 4, 5]
+</code></pre><h3 id="两个常用的Array属性"><a href="#两个常用的Array属性" class="headerlink" title="两个常用的Array属性"></a>两个常用的Array属性</h3><p>定义好数组之后，我们介绍两个Array最常用的属性。第一个是count，类型是Int。我们之前已经用过，用于获取数组中元素的个数：</p>
+<pre><code>array1.count    // 0
+fiveInts.count  // 5
+</code></pre><p>第二个是isEmtpy，类型是Bool。表示数组是否为空：</p>
+<pre><code>if array2.isEmpty {
+    // array2 is empty
+    print(&quot;array2 is empty&quot;)
+}
+</code></pre><h3 id="访问Array中的元素"><a href="#访问Array中的元素" class="headerlink" title="访问Array中的元素"></a>访问Array中的元素</h3><p>首先是索引访问：</p>
+<pre><code>fiveInts[2] // 3
+fiveInts[5] // This will crash
+</code></pre><p>就像，上面例子中这样。当使用索引访问数组元素时，<strong>你必须自行确保索引的安全性</strong>。如果索引超过了数组的范围，程序就会直接崩溃。其实，在Swift里，我们几乎不需要直接使用索引来访问数组元素。稍后，我们会专门提到Array的惯用法。因此，Swift开发者也没有对索引访问添加任何安全保护。言外之意就是，非要用，你自己对结果全权负责。</p>
+<p>其次，是使用range operator访问数组的一个范围：</p>
+<pre><code>fiveInts[0...2] // [1, 2, 3]
+fiveInts[0..&lt;2] // [1, 2]
+</code></pre><p>要说明的是，使用range operator得到的，并不是一个Array，而是一个ArraySlice。什么是ArraySlice呢？简单来说，就是Array某一段内容的view，它不真正保存数组的内容，只保存这个view引用的数组的范围：</p>
+<pre><code>// +---------+---+
+// | length  | 5 |
+// +---------+---+
+// | storage ptr |
+// +---------+---+
+//           |
+//           v
+//           +---+---+---+---+---+---------------------+
+//           | 1 | 2 | 3 | 4 | 5 |  reserved capacity  |
+//           +---+---+---+---+---+---------------------+
+//           ^
+//           |
+// +---------+---+
+// | storage ptr |
+// +---------+---+
+// | beg idx | 0 |
+// +---------+---+
+// | end idx | 3 |  ArraySlice for [0...2]
+// +---------+---+
+</code></pre><p>从上面这个注释，就很容易理解view的概念了，它只记录了要表达内容的区间。但是我们也可以直接通过这个view创建新的Array对象：</p>
+<pre><code>Array(fiveInts[0...2]) // [1, 2, 3]
+</code></pre><p>这样，就得到了一个值是[1, 2, 3]的Array对象。</p>
+<h3 id="遍历数组"><a href="#遍历数组" class="headerlink" title="遍历数组"></a>遍历数组</h3><p>首先，当然是我们最熟悉的for循环的方式：</p>
+<pre><code>for value in fiveInts {
+    print(value)
+}
+// 1 
+// 2
+// ...
+</code></pre><p>其次，如果我们想在遍历的时候，同时获得数组的索引和值，可以使用数组对象的enumerated()方法，它会返回一个Sequence对象，包含了每个成员的索引和值，我们同样可以在for循环中，依次访问它们：</p>
+<pre><code>for (index, value) in fiveInts.enumerated() {
+    print(&quot;\(index): \(value)&quot;)
+}
+// 0: 1
+// 1: 2
+// ...
+</code></pre><p>第三，借助closure，我们还可以使用Array对象的forEach方法：</p>
+<pre><code>fiveInts.forEach { print($0) }
+</code></pre><h3 id="添加和删除元素"><a href="#添加和删除元素" class="headerlink" title="添加和删除元素"></a>添加和删除元素</h3><p>最后，来看如何编辑Array中的元素。要在数组的末尾添加元素，我们可以这样：</p>
+<pre><code>array1.append(1)     // [1]
+array1 += [2, 3, 4]  // [1, 2, 3, 4]
+</code></pre><p>要在Array中间位置添加元素，可以使用insert方法：</p>
+<pre><code>// [1, 2, 3, 4, 5]
+array1.insert(5, at: array1.endIndex)
+</code></pre><p>它的第一个参数表示要插入的值，第二个参数表示要插入的位置，这个位置必须是一个合法的范围，即0…array1.endIndex，如果超出这个范围，会直接引发运行时错误。</p>
+<p>要删除Array中的元素，可以使用remove(at:)方法，它只接受一个参数，表示要删除元素的位置：</p>
+<pre><code>array1.remove(at: 4) // [1, 2, 3, 4]
+</code></pre><p>同样，你必须自行保证使用的at参数不超过数组的合法范围，否则会引发运行时错误。当然，如果你仅仅想删除数组中的最后一个元素，还可以使用removeLast()方法：</p>
+<pre><code>array1.removeLast() // [1, 2, 3]
+array2.removeLast() // This will crash!!!
+</code></pre><p>从上面的例子可以看到，你同样要对removeLast()的应用安全负责，当你删除一个空数组中最后一个元素的时候，会直接引发运行时错误。</p>
 
           
         
